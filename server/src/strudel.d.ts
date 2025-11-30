@@ -120,6 +120,9 @@ declare module 'superdough' {
   export function superdough(value: any, t: number, hapDuration: number, cps?: number, cycle?: number): Promise<void>;
   export function samples(source: string | object, base?: string, options?: object): Promise<void>;
   export function registerSynthSounds(): Promise<void>;
+  export function registerZZFXSounds(): Promise<void>;
+  export function aliasBank(url: string): Promise<void>;
+  export function soundAlias(from: string, to: string): void;
   export function initAudio(): Promise<void>;
   export function initAudioOnFirstClick(): Promise<void>;
   export function registerSound(key: string, onTrigger: Function, data?: object): void;

@@ -11,7 +11,7 @@ import { initOsc, sendHapToSuperDirt, isOscConnected, closeOsc } from './osc-out
 // This ensures AudioContext is available before superdough checks for it.
 
 // Import superdough for audio output
-import { superdough, registerSynthSounds, samples as superdoughSamples, getAudioContext } from 'superdough';
+import { superdough, registerSynthSounds, registerZZFXSounds, aliasBank, samples as superdoughSamples, getAudioContext } from 'superdough';
 
 // Import our custom soundfont loader (adapted for Node.js)
 import { registerSoundfonts, getSoundfontNames } from './soundfonts.js';
@@ -200,6 +200,10 @@ const noiseTypes = ['white', 'pink', 'brown'];
 });
 console.log('[strudel-engine] Synth sounds registered (sine, sawtooth, square, triangle)');
 
+// Register ZZFX chip sounds (retro/chiptune style)
+await registerZZFXSounds();
+console.log('[strudel-engine] ZZFX sounds registered (chip sounds)');
+
 // Register GM soundfont instruments (gm_piano, gm_violin, etc.)
 registerSoundfonts();
 // Add soundfont names to the samples list
@@ -236,7 +240,9 @@ const sampleLoaders: Promise<void>[] = [
       `${baseCDN}/tidal-drum-machines.json`,
       `${baseCDN}/tidal-drum-machines/machines/`
     );
-    console.log('[strudel-engine] Loaded: tidal-drum-machines');
+    // Also load the bank alias file for short names like "808" -> "RolandTR808"
+    await aliasBank(`${baseCDN}/tidal-drum-machines-alias.json`);
+    console.log('[strudel-engine] Loaded: tidal-drum-machines (with aliases)');
   })(),
   
   // Mridangam samples
