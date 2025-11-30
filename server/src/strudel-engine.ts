@@ -723,6 +723,89 @@ export class StrudelEngine {
   }
 
   /**
+   * Query the current pattern for visualization data
+   * Returns haps grouped by track (sound/note name) for the display window
+   * @param displayCycles Number of cycles to show in the visualization
+   */
+  queryVisualization(displayCycles = 2): {
+    cycle: number;
+    phase: number;
+    tracks: { name: string; events: { start: number; end: number; active: boolean }[] }[];
+    displayCycles: number;
+  } | null {
+    if (!this.repl) return null;
+
+    const state = (this.repl as any).state;
+    const pattern = state?.pattern;
+    if (!pattern) return null;
+
+    const scheduler = (this.repl as any).scheduler;
+    const currentCycle = scheduler?.now?.() || 0;
+    const phase = currentCycle % 1;
+
+    // Query window: from start of current cycle to end of display
+    const windowStart = Math.floor(currentCycle);
+    const windowEnd = windowStart + displayCycles;
+
+    try {
+      const haps = pattern.queryArc(windowStart, windowEnd);
+
+      // Group haps by track name (sound or note)
+      const trackMap = new Map<string, { start: number; end: number; active: boolean }[]>();
+
+      for (const hap of haps) {
+        // Get track name from the hap value
+        let trackName = 'unknown';
+        if (hap.value) {
+          if (typeof hap.value === 'string') {
+            trackName = hap.value;
+          } else if (hap.value.s) {
+            trackName = hap.value.s;
+          } else if (hap.value.note) {
+            trackName = String(hap.value.note);
+          } else if (hap.value.n !== undefined) {
+            trackName = `n${hap.value.n}`;
+          }
+        }
+
+        // Normalize times to 0-1 within display window
+        const hapStart = hap.whole?.begin?.valueOf() ?? hap.part.begin.valueOf();
+        const hapEnd = hap.whole?.end?.valueOf() ?? hap.part.end.valueOf();
+
+        const normalizedStart = (hapStart - windowStart) / displayCycles;
+        const normalizedEnd = (hapEnd - windowStart) / displayCycles;
+
+        // Check if this hap is currently active
+        const isActive = currentCycle >= hapStart && currentCycle < hapEnd;
+
+        if (!trackMap.has(trackName)) {
+          trackMap.set(trackName, []);
+        }
+        trackMap.get(trackName)!.push({
+          start: Math.max(0, normalizedStart),
+          end: Math.min(1, normalizedEnd),
+          active: isActive,
+        });
+      }
+
+      // Convert map to array of tracks, sorted by name
+      const tracks = Array.from(trackMap.entries())
+        .map(([name, events]) => ({ name, events }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      return {
+        cycle: currentCycle,
+        phase,
+        tracks,
+        displayCycles,
+      };
+    } catch (err) {
+      console.error('[strudel-engine] Error querying visualization:', err);
+      return null;
+    }
+  }
+
+  /**
    * Cleanup resources
    */
   dispose(): void {

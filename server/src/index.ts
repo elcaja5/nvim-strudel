@@ -144,6 +144,17 @@ async function main() {
           banks: engine.getBanks(),
         });
         break;
+
+      case 'queryVisualization': {
+        const vizData = engine.queryVisualization(msg.cycles || 2);
+        if (vizData) {
+          server.send(ws, {
+            type: 'visualization',
+            ...vizData,
+          });
+        }
+        break;
+      }
     }
   });
 

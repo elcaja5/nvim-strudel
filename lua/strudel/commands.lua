@@ -274,6 +274,14 @@ function M.setup()
     desc = 'Stop and silence all Strudel patterns',
   })
 
+  -- :StrudelPianoroll - Toggle pianoroll visualization
+  vim.api.nvim_create_user_command('StrudelPianoroll', function()
+    local pianoroll = require('strudel.pianoroll')
+    pianoroll.toggle()
+  end, {
+    desc = 'Toggle Strudel pianoroll visualization',
+  })
+
   -- Setup filetype-based keymaps
   setup_filetype_autocmds()
 

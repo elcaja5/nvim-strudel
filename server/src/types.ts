@@ -25,7 +25,12 @@ export interface GetBanksMessage {
   type: 'getBanks';
 }
 
-export type ClientMessage = EvalMessage | ControlMessage | GetSamplesMessage | GetSoundsMessage | GetBanksMessage;
+export interface QueryVisualizationMessage {
+  type: 'queryVisualization';
+  cycles?: number; // How many cycles to query (default 2)
+}
+
+export type ClientMessage = EvalMessage | ControlMessage | GetSamplesMessage | GetSoundsMessage | GetBanksMessage | QueryVisualizationMessage;
 
 /** Source location in the editor */
 export interface SourceLocation {
@@ -76,7 +81,26 @@ export interface BanksMessage {
   banks: string[];
 }
 
-export type ServerMessage = ActiveMessage | ErrorMessage | StatusMessage | SamplesMessage | SoundsMessage | BanksMessage;
+/** Visualization track with events */
+export interface VisualizationTrack {
+  name: string;
+  events: {
+    start: number;  // 0-1 normalized position within display window
+    end: number;    // 0-1 normalized position
+    active: boolean; // Currently sounding
+  }[];
+}
+
+/** Visualization data for pianoroll/punchcard display */
+export interface VisualizationMessage {
+  type: 'visualization';
+  cycle: number;       // Current cycle number
+  phase: number;       // 0-1 position within current cycle
+  tracks: VisualizationTrack[];
+  displayCycles: number; // How many cycles are shown
+}
+
+export type ServerMessage = ActiveMessage | ErrorMessage | StatusMessage | SamplesMessage | SoundsMessage | BanksMessage | VisualizationMessage;
 
 /** Server configuration */
 export interface ServerConfig {

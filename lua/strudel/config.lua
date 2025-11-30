@@ -25,12 +25,18 @@
 ---@field enabled boolean
 ---@field cmd? string[] Custom LSP command
 
+---@class StrudelPianorollConfig
+---@field height number Height of the pianoroll window
+---@field width number Character width of the display
+---@field display_cycles number Number of cycles to show
+
 ---@class StrudelConfig
 ---@field server StrudelServerConfig
 ---@field highlight StrudelHighlightConfig
 ---@field conceal StrudelConcealConfig
 ---@field keymaps StrudelKeymapsConfig
 ---@field lsp StrudelLspConfig
+---@field pianoroll StrudelPianorollConfig
 ---@field picker 'auto'|'snacks'|'telescope'
 ---@field auto_eval boolean
 ---@field filetypes string[]
@@ -63,6 +69,11 @@ M.defaults = {
   },
   lsp = {
     enabled = true,           -- LSP for mini-notation completions/diagnostics
+  },
+  pianoroll = {
+    height = 10,              -- Height of pianoroll window
+    width = 64,               -- Character width of display
+    display_cycles = 2,       -- Number of cycles to show
   },
   picker = 'auto',
   auto_eval = false,
