@@ -318,12 +318,21 @@ function M.setup()
   vim.api.nvim_create_autocmd('BufWipeout', {
     group = wipeout_group,
     callback = function(args)
-      -- If this buffer was evaluated, stop playback
+      -- If this buffer was evaluated, remove it from tracking
       if evaluated_buffers[args.buf] then
         evaluated_buffers[args.buf] = nil
-        if client.is_connected() then
+        
+        -- Check if any evaluated buffers remain
+        local has_remaining = false
+        for _ in pairs(evaluated_buffers) do
+          has_remaining = true
+          break
+        end
+        
+        -- If no evaluated buffers remain, stop playback
+        if not has_remaining and client.is_connected() then
           client.stop()
-          utils.debug('Buffer closed, stopping playback')
+          utils.debug('Last strudel buffer closed, stopping playback')
         end
       end
     end,
