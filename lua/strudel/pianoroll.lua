@@ -865,7 +865,8 @@ local function on_status(msg)
   end
   
   -- Only hide on stop (not pause) - server sends stopped=true when fully stopped
-  if state.enabled and msg.stopped then
+  -- Also check was_playing to avoid hiding on initial connection or when already hidden
+  if state.enabled and msg.stopped and was_playing then
     vim.schedule(function()
       hide_window()
     end)
