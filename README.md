@@ -12,7 +12,6 @@ nvim-strudel brings the Strudel live coding music environment to Neovim, providi
 - Pianoroll visualization (auto-shows when playing, hides when stopped)
 - LSP support for mini-notation (completions, hover, diagnostics)
 - All default Strudel samples available (piano, drums, synths, etc.)
-- OSC output to SuperDirt/SuperCollider (optional)
 
 ## Requirements
 
@@ -27,28 +26,24 @@ nvim-strudel brings the Strudel live coding music environment to Neovim, providi
 ```lua
 {
   'Goshujinsama/nvim-strudel',
-  ft = { 'strudel', 'javascript', 'typescript' },
-  cmd = { 'StrudelPlay', 'StrudelEval', 'StrudelConnect' },
+  ft = 'strudel',
   build = 'cd server && npm install && npm run build',
-  opts = {
-    -- See Configuration below
+  keys = {
+    { '<C-CR>', '<cmd>StrudelPlay<cr>', ft = 'strudel', desc = 'Strudel: Play' },
   },
 }
 ```
 
-The `build` step automatically compiles the backend server when the plugin is installed or updated.
+The `build` step compiles the backend server when the plugin is installed or updated.
 
 ## Quick Start
 
-1. Open a `.strudel` or `.js` file
-2. Write a Strudel pattern:
-   ```javascript
-   s("bd sd bd sd").fast(2)
-   ```
-3. Start playback: `:StrudelPlay` (auto-connects and auto-evals)
-4. Hear your music!
+1. Open a `.strudel` file
+2. Write a pattern: `s("bd sd bd sd").fast(2)`
+3. Press `Ctrl+Enter` to play (or `:StrudelPlay`)
 
-## Configuration
+<details>
+<summary><strong>All Configuration Options</strong></summary>
 
 ```lua
 require('strudel').setup({
@@ -66,26 +61,22 @@ require('strudel').setup({
     muted = 'StrudelMuted',     -- Muted element
   },
 
-  -- Pianoroll visualization
-  pianoroll = {
-    height = 10,          -- Height of pianoroll window
-    display_cycles = 2,   -- Number of cycles to show
-    mode = 'auto',        -- 'auto', 'tracks', 'notes', or 'drums'
-  },
-
-  -- Keymaps (disabled by default, opt-in)
-  keymaps = {
-    enabled = false,      -- Set to true to enable keymaps
-    eval = '<C-CR>',      -- Ctrl+Enter to evaluate (like Strudel web UI)
-    play = '<leader>sp',  -- Play/resume
-    stop = '<leader>ss',  -- Stop
-    pause = '<leader>sx', -- Pause
-    hush = '<leader>sh',  -- Hush (silence all immediately)
+  -- Conceal characters for playhead
+  conceal = {
+    enabled = true,
+    char = '▶',
   },
 
   -- LSP for mini-notation
   lsp = {
-    enabled = true,       -- Enable LSP (completions, hover, diagnostics)
+    enabled = true,
+  },
+
+  -- Pianoroll visualization
+  pianoroll = {
+    height = 10,
+    display_cycles = 2,
+    mode = 'auto',  -- 'auto', 'tracks', 'notes', or 'drums'
   },
 
   -- Picker backend: 'auto', 'snacks', or 'telescope'
@@ -98,6 +89,8 @@ require('strudel').setup({
   filetypes = { 'strudel', 'javascript', 'typescript' },
 })
 ```
+
+</details>
 
 ## Commands
 
@@ -128,22 +121,27 @@ The pianoroll provides a visual representation of your pattern. It automatically
 
 ## Keymaps
 
-Keymaps are disabled by default. To enable them, set `keymaps.enabled = true` in your config.
-
-When enabled, these keymaps are set for `strudel`, `javascript`, and `typescript` files:
-
-| Key | Mode | Action |
-|-----|------|--------|
-| `Ctrl+Enter` | n, v, i | Evaluate buffer/selection |
-| `<leader>sp` | n | Play |
-| `<leader>ss` | n | Stop |
-| `<leader>sx` | n | Pause |
-| `<leader>sh` | n | Hush (silence all) |
-
-You can customize the keys in your config, or define your own keymaps manually:
+Define keymaps using lazy.nvim's `keys` spec:
 
 ```lua
-vim.keymap.set('n', '<leader>se', '<cmd>StrudelEval<cr>', { desc = 'Strudel Eval' })
+{
+  'Goshujinsama/nvim-strudel',
+  ft = 'strudel',
+  build = 'cd server && npm install && npm run build',
+  keys = {
+    { '<C-CR>', '<cmd>StrudelPlay<cr>', ft = 'strudel', desc = 'Strudel: Play' },
+    { '<leader>sp', '<cmd>StrudelPlay<cr>', ft = 'strudel', desc = 'Strudel: Play' },
+    { '<leader>ss', '<cmd>StrudelStop<cr>', ft = 'strudel', desc = 'Strudel: Stop' },
+    { '<leader>sx', '<cmd>StrudelPause<cr>', ft = 'strudel', desc = 'Strudel: Pause' },
+    { '<leader>sh', '<cmd>StrudelHush<cr>', ft = 'strudel', desc = 'Strudel: Hush' },
+  },
+}
+```
+
+Or define keymaps manually:
+
+```lua
+vim.keymap.set('n', '<leader>se', '<cmd>StrudelEval<cr>', { desc = 'Strudel: Eval' })
 ```
 
 ## LSP (Language Server)
@@ -174,9 +172,6 @@ node dist/index.js
 Environment variables:
 - `STRUDEL_PORT` - Server port (default: 37812)
 - `STRUDEL_HOST` - Server host (default: 127.0.0.1)
-- `STRUDEL_USE_OSC=1` - Enable OSC output to SuperDirt
-- `STRUDEL_OSC_HOST` - SuperDirt host (default: 127.0.0.1)
-- `STRUDEL_OSC_PORT` - SuperDirt port (default: 57120)
 
 ## Highlighting
 
@@ -198,14 +193,6 @@ To customize, override in your config (after colorscheme loads):
 vim.api.nvim_set_hl(0, 'StrudelActive', { bg = '#3d5c3d', bold = true })
 vim.api.nvim_set_hl(0, 'StrudelPending', { link = 'CursorLine' })
 ```
-
-## SuperDirt / SuperCollider
-
-To use SuperDirt for audio output instead of (or in addition to) Web Audio:
-
-1. Start SuperCollider with SuperDirt
-2. Set environment variable: `STRUDEL_USE_OSC=1`
-3. Start the server (or restart if already running)
 
 ## License
 

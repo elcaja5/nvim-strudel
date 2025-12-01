@@ -13,14 +13,6 @@
 ---@field enabled boolean
 ---@field char string
 
----@class StrudelKeymapsConfig
----@field enabled boolean
----@field eval string Keymap to evaluate buffer/selection
----@field play string Keymap to start playback
----@field stop string Keymap to stop playback
----@field pause string Keymap to pause playback
----@field hush string Keymap to silence all (stop + clear)
-
 ---@class StrudelLspConfig
 ---@field enabled boolean
 ---@field cmd? string[] Custom LSP command
@@ -34,7 +26,6 @@
 ---@field server StrudelServerConfig
 ---@field highlight StrudelHighlightConfig
 ---@field conceal StrudelConcealConfig
----@field keymaps StrudelKeymapsConfig
 ---@field lsp StrudelLspConfig
 ---@field pianoroll StrudelPianorollConfig
 ---@field picker 'auto'|'snacks'|'telescope'
@@ -58,14 +49,6 @@ M.defaults = {
   conceal = {
     enabled = true,
     char = '▶',
-  },
-  keymaps = {
-    enabled = false,          -- Disabled by default, users opt-in
-    eval = '<C-CR>',          -- Ctrl+Enter to evaluate (like web UI)
-    play = '<leader>sp',      -- Play/resume
-    stop = '<leader>ss',      -- Stop
-    pause = '<leader>sx',     -- Pause
-    hush = '<leader>sh',      -- Hush (silence all)
   },
   lsp = {
     enabled = true,           -- LSP for mini-notation completions/diagnostics

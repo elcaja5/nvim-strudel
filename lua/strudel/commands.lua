@@ -3,78 +3,6 @@ local config = require('strudel.config')
 
 local M = {}
 
----Setup keymaps for a buffer
----@param bufnr number
-local function setup_buffer_keymaps(bufnr)
-  local cfg = config.get()
-  if not cfg.keymaps.enabled then
-    return
-  end
-
-  local opts = { buffer = bufnr, silent = true }
-
-  -- Eval: Ctrl+Enter (works in normal and visual mode)
-  if cfg.keymaps.eval and cfg.keymaps.eval ~= '' then
-    vim.keymap.set('n', cfg.keymaps.eval, '<cmd>StrudelEval<cr>', vim.tbl_extend('force', opts, { desc = 'Strudel: Evaluate buffer' }))
-    vim.keymap.set('v', cfg.keymaps.eval, ':StrudelEval<cr>', vim.tbl_extend('force', opts, { desc = 'Strudel: Evaluate selection' }))
-    vim.keymap.set('i', cfg.keymaps.eval, '<cmd>StrudelEval<cr>', vim.tbl_extend('force', opts, { desc = 'Strudel: Evaluate buffer' }))
-  end
-
-  -- Play
-  if cfg.keymaps.play and cfg.keymaps.play ~= '' then
-    vim.keymap.set('n', cfg.keymaps.play, '<cmd>StrudelPlay<cr>', vim.tbl_extend('force', opts, { desc = 'Strudel: Play' }))
-  end
-
-  -- Stop
-  if cfg.keymaps.stop and cfg.keymaps.stop ~= '' then
-    vim.keymap.set('n', cfg.keymaps.stop, '<cmd>StrudelStop<cr>', vim.tbl_extend('force', opts, { desc = 'Strudel: Stop' }))
-  end
-
-  -- Pause
-  if cfg.keymaps.pause and cfg.keymaps.pause ~= '' then
-    vim.keymap.set('n', cfg.keymaps.pause, '<cmd>StrudelPause<cr>', vim.tbl_extend('force', opts, { desc = 'Strudel: Pause' }))
-  end
-
-  -- Hush (silence all)
-  if cfg.keymaps.hush and cfg.keymaps.hush ~= '' then
-    vim.keymap.set('n', cfg.keymaps.hush, '<cmd>StrudelHush<cr>', vim.tbl_extend('force', opts, { desc = 'Strudel: Hush (silence)' }))
-  end
-
-  utils.debug('Keymaps set for buffer ' .. bufnr)
-end
-
----Setup autocmds for filetype-based keymaps
-local function setup_filetype_autocmds()
-  local cfg = config.get()
-  if not cfg.keymaps.enabled then
-    return
-  end
-
-  local group = vim.api.nvim_create_augroup('StrudelKeymaps', { clear = true })
-
-  vim.api.nvim_create_autocmd('FileType', {
-    group = group,
-    pattern = cfg.filetypes,
-    callback = function(args)
-      setup_buffer_keymaps(args.buf)
-    end,
-    desc = 'Setup Strudel keymaps for buffer',
-  })
-
-  -- Also setup for any existing buffers with matching filetypes
-  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_valid(bufnr) then
-      local ft = vim.bo[bufnr].filetype
-      for _, pattern in ipairs(cfg.filetypes) do
-        if ft == pattern then
-          setup_buffer_keymaps(bufnr)
-          break
-        end
-      end
-    end
-  end
-end
-
 ---Register all user commands
 function M.setup()
   local client = require('strudel.client')
@@ -309,9 +237,6 @@ function M.setup()
     end,
     desc = 'Toggle Strudel pianoroll or set mode (auto/tracks/notes/drums/smooth/nosmooth)',
   })
-
-  -- Setup filetype-based keymaps
-  setup_filetype_autocmds()
 
   -- Setup handlers to stop playback when strudel buffer is closed
   local wipeout_group = vim.api.nvim_create_augroup('StrudelBufWipeout', { clear = true })
