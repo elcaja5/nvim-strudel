@@ -313,6 +313,23 @@ function M.setup()
   -- Setup filetype-based keymaps
   setup_filetype_autocmds()
 
+  -- Setup BufWipeout handler to stop playback when strudel buffer is closed
+  local wipeout_group = vim.api.nvim_create_augroup('StrudelBufWipeout', { clear = true })
+  vim.api.nvim_create_autocmd('BufWipeout', {
+    group = wipeout_group,
+    callback = function(args)
+      -- If this buffer was evaluated, stop playback
+      if evaluated_buffers[args.buf] then
+        evaluated_buffers[args.buf] = nil
+        if client.is_connected() then
+          client.stop()
+          utils.debug('Buffer closed, stopping playback')
+        end
+      end
+    end,
+    desc = 'Stop Strudel playback when buffer is closed',
+  })
+
   utils.debug('Commands registered')
 end
 
