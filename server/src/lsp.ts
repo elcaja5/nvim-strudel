@@ -4508,11 +4508,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'analyze',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Audio analysis',
+    documentation: 'Performs audio analysis (FFT) on the pattern.',
     signatures: [{
-      label: 'analyze(...)',
-      parameters: [],
+      label: 'analyze(options)',
+      parameters: [{ label: 'options', documentation: 'Analysis options' }],
     }],
   },
   {
@@ -4535,11 +4535,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'backgroundImage',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Background image',
+    documentation: 'Sets a background image for visualization.',
     signatures: [{
-      label: 'backgroundImage(...)',
-      parameters: [],
+      label: 'backgroundImage(url)',
+      parameters: [{ label: 'url', documentation: 'Image URL' }],
     }],
   },
   {
@@ -4625,11 +4625,14 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'bjork',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Bjorklund algorithm',
+    documentation: 'Creates Euclidean patterns using Bjorklund algorithm.',
     signatures: [{
-      label: 'bjork(...)',
-      parameters: [],
+      label: 'bjork(pulses, steps)',
+      parameters: [
+        { label: 'pulses', documentation: 'Number of pulses' },
+        { label: 'steps', documentation: 'Number of steps' }
+      ],
     }],
   },
   {
@@ -4820,11 +4823,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'curve',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Curve modifier',
+    documentation: 'Applies a curve transformation to values.',
     signatures: [{
-      label: 'curve(...)',
-      parameters: [],
+      label: 'curve(exponent)',
+      parameters: [{ label: 'exponent', documentation: 'Curve exponent' }],
     }],
   },
   {
@@ -4838,11 +4841,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'cycleToSeconds',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Cycles to seconds',
+    documentation: 'Converts cycle time to seconds based on current tempo.',
     signatures: [{
-      label: 'cycleToSeconds(...)',
-      parameters: [],
+      label: 'cycleToSeconds(cycles)',
+      parameters: [{ label: 'cycles', documentation: 'Number of cycles' }],
     }],
   },
   {
@@ -4868,11 +4871,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'deltaSlide',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Delta slide',
+    documentation: 'Adds pitch slide delta over time.',
     signatures: [{
-      label: 'deltaSlide(...)',
-      parameters: [],
+      label: 'deltaSlide(amount)',
+      parameters: [{ label: 'amount', documentation: 'Slide delta amount' }],
     }],
   },
   {
@@ -4895,11 +4898,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'drawLine',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Draw line visualization',
+    documentation: 'Draws a line visualization of the pattern.',
     signatures: [{
-      label: 'drawLine(...)',
-      parameters: [],
+      label: 'drawLine(options)',
+      parameters: [{ label: 'options', documentation: 'Drawing options' }],
     }],
   },
   {
@@ -5011,11 +5014,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'filter',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Filter pattern',
+    documentation: 'Filters events in a pattern based on a predicate function.',
     signatures: [{
-      label: 'filter(...)',
-      parameters: [],
+      label: 'filter(fn)',
+      parameters: [{ label: 'fn', documentation: 'Predicate function' }],
     }],
   },
   {
@@ -5074,20 +5077,20 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'frameRate',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Frame rate',
+    documentation: 'Sets the visualization frame rate.',
     signatures: [{
-      label: 'frameRate(...)',
-      parameters: [],
+      label: 'frameRate(fps)',
+      parameters: [{ label: 'fps', documentation: 'Frames per second' }],
     }],
   },
   {
     name: 'frames',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Frame count',
+    documentation: 'Sets the number of frames for visualization.',
     signatures: [{
-      label: 'frames(...)',
-      parameters: [],
+      label: 'frames(n)',
+      parameters: [{ label: 'n', documentation: 'Number of frames' }],
     }],
   },
   {
@@ -5101,11 +5104,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'fromBipolar',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Convert from bipolar',
+    documentation: 'Converts a bipolar value (-1 to 1) to unipolar (0 to 1).',
     signatures: [{
-      label: 'fromBipolar(...)',
-      parameters: [],
+      label: 'fromBipolar(value)',
+      parameters: [{ label: 'value', documentation: 'Bipolar value (-1 to 1)' }],
     }],
   },
   {
@@ -5182,11 +5185,16 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'hsla',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'HSLA color',
+    documentation: 'Sets visualization color in HSLA format.',
     signatures: [{
-      label: 'hsla(...)',
-      parameters: [],
+      label: 'hsla(h, s, l, a)',
+      parameters: [
+        { label: 'h', documentation: 'Hue (0-360)' },
+        { label: 's', documentation: 'Saturation (0-100)' },
+        { label: 'l', documentation: 'Lightness (0-100)' },
+        { label: 'a', documentation: 'Alpha (0-1)' }
+      ],
     }],
   },
   {
@@ -5209,20 +5217,20 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'keep',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Keep events',
+    documentation: 'Keeps only events that match the predicate.',
     signatures: [{
-      label: 'keep(...)',
-      parameters: [],
+      label: 'keep(fn)',
+      parameters: [{ label: 'fn', documentation: 'Predicate function' }],
     }],
   },
   {
     name: 'keepif',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Keep if condition',
+    documentation: 'Keeps events only when condition is true.',
     signatures: [{
-      label: 'keepif(...)',
-      parameters: [],
+      label: 'keepif(condition)',
+      parameters: [{ label: 'condition', documentation: 'Condition pattern' }],
     }],
   },
   {
@@ -5263,20 +5271,20 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'loopb',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Loop begin',
+    documentation: 'Sets the loop begin point for sample playback (0-1).',
     signatures: [{
-      label: 'loopb(...)',
-      parameters: [],
+      label: 'loopb(pos)',
+      parameters: [{ label: 'pos', documentation: 'Loop begin position (0-1)' }],
     }],
   },
   {
     name: 'loope',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Loop end',
+    documentation: 'Sets the loop end point for sample playback (0-1).',
     signatures: [{
-      label: 'loope(...)',
-      parameters: [],
+      label: 'loope(pos)',
+      parameters: [{ label: 'pos', documentation: 'Loop end position (0-1)' }],
     }],
   },
   {
@@ -5684,20 +5692,20 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'pitchJump',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Pitch jump',
+    documentation: 'Jumps the pitch by a specified amount.',
     signatures: [{
-      label: 'pitchJump(...)',
-      parameters: [],
+      label: 'pitchJump(semitones)',
+      parameters: [{ label: 'semitones', documentation: 'Semitones to jump' }],
     }],
   },
   {
     name: 'pitchJumpTime',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Pitch jump time',
+    documentation: 'Time at which pitch jump occurs.',
     signatures: [{
-      label: 'pitchJumpTime(...)',
-      parameters: [],
+      label: 'pitchJumpTime(time)',
+      parameters: [{ label: 'time', documentation: 'Time of pitch jump' }],
     }],
   },
   {
@@ -5747,11 +5755,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'randrun',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Random run',
+    documentation: 'Creates a random sequence of numbers.',
     signatures: [{
-      label: 'randrun(...)',
-      parameters: [],
+      label: 'randrun(n)',
+      parameters: [{ label: 'n', documentation: 'Length of sequence' }],
     }],
   },
   {
@@ -5783,20 +5791,20 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'repeatTime',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Repeat time',
+    documentation: 'Time interval for note repetition.',
     signatures: [{
-      label: 'repeatTime(...)',
-      parameters: [],
+      label: 'repeatTime(time)',
+      parameters: [{ label: 'time', documentation: 'Repeat interval' }],
     }],
   },
   {
     name: 'replicate',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Replicate events',
+    documentation: 'Replicates each event a specified number of times.',
     signatures: [{
-      label: 'replicate(...)',
-      parameters: [],
+      label: 'replicate(n)',
+      parameters: [{ label: 'n', documentation: 'Number of replications' }],
     }],
   },
   {
@@ -6005,11 +6013,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'speak',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Speech synthesis',
+    documentation: 'Uses speech synthesis to speak the pattern values.',
     signatures: [{
-      label: 'speak(...)',
-      parameters: [],
+      label: 'speak(text)',
+      parameters: [{ label: 'text', documentation: 'Text to speak' }],
     }],
   },
   {
@@ -6199,11 +6207,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'toBipolar',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Convert to bipolar',
+    documentation: 'Converts a unipolar value (0 to 1) to bipolar (-1 to 1).',
     signatures: [{
-      label: 'toBipolar(...)',
-      parameters: [],
+      label: 'toBipolar(value)',
+      parameters: [{ label: 'value', documentation: 'Unipolar value (0 to 1)' }],
     }],
   },
   {
