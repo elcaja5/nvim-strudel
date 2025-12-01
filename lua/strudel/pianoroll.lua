@@ -955,6 +955,12 @@ hide_window = function()
   stop_timer()
 
   if state.winid and vim.api.nvim_win_is_valid(state.winid) then
+    -- Check if this is the last window - if so, quit nvim
+    local wins = vim.api.nvim_list_wins()
+    if #wins == 1 then
+      vim.cmd('quit')
+      return
+    end
     vim.api.nvim_win_close(state.winid, true)
   end
 
