@@ -2,6 +2,7 @@
   "name": "strudel-server",
   "version": "0.1.0",
   "description": "Backend server for strudel.nvim - live coding music in Neovim",
+  "author": "g0shujinsama (https://github.com/Goshujinsama)",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
