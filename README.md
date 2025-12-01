@@ -9,6 +9,7 @@ nvim-strudel brings the Strudel live coding music environment to Neovim, providi
 - Live code music patterns directly in Neovim
 - Real-time visual feedback showing which code elements are currently producing sound
 - Full playback control (play, pause, stop, hush)
+- Pianoroll visualization (auto-shows when playing, hides when stopped)
 - LSP support for mini-notation (completions, hover, diagnostics)
 - All default Strudel samples available (piano, drums, synths, etc.)
 - OSC output to SuperDirt/SuperCollider (optional)
@@ -25,7 +26,7 @@ nvim-strudel brings the Strudel live coding music environment to Neovim, providi
 
 ```lua
 {
-  'username/nvim-strudel',
+  'Goshujinsama/nvim-strudel',
   ft = { 'strudel', 'javascript', 'typescript' },
   cmd = { 'StrudelPlay', 'StrudelEval', 'StrudelConnect' },
   build = 'cd server && npm install && npm run build',
@@ -44,9 +45,8 @@ The `build` step automatically compiles the backend server when the plugin is in
    ```javascript
    s("bd sd bd sd").fast(2)
    ```
-3. Connect to the server: `:StrudelConnect`
-4. Evaluate your code: `:StrudelEval`
-5. Hear your music!
+3. Start playback: `:StrudelPlay` (auto-connects and auto-evals)
+4. Hear your music!
 
 ## Configuration
 
@@ -66,10 +66,11 @@ require('strudel').setup({
     muted = 'StrudelMuted',     -- Muted element
   },
 
-  -- Conceal characters for playhead
-  conceal = {
-    enabled = true,
-    char = '▶',
+  -- Pianoroll visualization
+  pianoroll = {
+    height = 10,          -- Height of pianoroll window
+    display_cycles = 2,   -- Number of cycles to show
+    mode = 'auto',        -- 'auto', 'tracks', 'notes', or 'drums'
   },
 
   -- Keymaps (disabled by default, opt-in)
@@ -109,9 +110,21 @@ require('strudel').setup({
 | `:StrudelEval` | Evaluate current buffer or selection (auto-connects if needed) |
 | `:StrudelConnect` | Connect to server (auto-starts server if needed) |
 | `:StrudelDisconnect` | Disconnect and stop server |
-| `:StrudelStatus` | Show connection and server status |
+| `:StrudelStatus` | Show connection, server, and pianoroll status |
+| `:StrudelPianoroll` | Toggle pianoroll visualization |
 | `:StrudelSamples` | Browse available samples |
+| `:StrudelSounds` | Browse available sounds |
+| `:StrudelBanks` | Browse sample banks |
 | `:StrudelPatterns` | Browse saved patterns |
+
+## Pianoroll
+
+The pianoroll provides a visual representation of your pattern. It automatically shows when playback starts and hides when stopped.
+
+- Toggle with `:StrudelPianoroll`
+- Stays visible when paused
+- Supports multiple visualization modes: `auto`, `tracks`, `notes`, `drums`
+- Pattern code using `.pianoroll()` or `.punchcard()` auto-enables visualization
 
 ## Keymaps
 
@@ -151,7 +164,7 @@ require('strudel').setup({
 
 ## Running the Server Manually
 
-Start the server in a terminal:
+The server auto-starts by default. To run manually:
 
 ```bash
 cd server
@@ -164,17 +177,6 @@ Environment variables:
 - `STRUDEL_USE_OSC=1` - Enable OSC output to SuperDirt
 - `STRUDEL_OSC_HOST` - SuperDirt host (default: 127.0.0.1)
 - `STRUDEL_OSC_PORT` - SuperDirt port (default: 57120)
-
-## Available Samples
-
-nvim-strudel loads the same default samples as the Strudel web UI:
-
-- **piano** - Salamander Grand Piano
-- **VCSL** - Virtual Community Sample Library (orchestral instruments)
-- **tidal-drum-machines** - TR808, TR909, and more classic drum machines
-- **mridangam** - South Indian percussion
-- **Dirt-Samples** - casio, crow, insect, wind, jazz, metal, east, space, numbers
-- **github:tidalcycles/dirt-samples** - Full TidalCycles sample collection
 
 ## Highlighting
 
@@ -203,11 +205,11 @@ To use SuperDirt for audio output instead of (or in addition to) Web Audio:
 
 1. Start SuperCollider with SuperDirt
 2. Set environment variable: `STRUDEL_USE_OSC=1`
-3. Start the server
+3. Start the server (or restart if already running)
 
 ## License
 
-AGPL-3.0 (matching Strudel's license)
+AGPL-3.0 - Required due to dependency on Strudel libraries.
 
 ## Acknowledgments
 
