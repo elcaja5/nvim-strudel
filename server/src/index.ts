@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * strudel-server - Backend server for strudel.nvim
+ * strudel-server - Backend server for nvim-strudel
  * Provides TCP connection for Neovim and runs Strudel pattern evaluation
  * Audio output via Web Audio (superdough) or OSC to SuperCollider/SuperDirt
  * 
