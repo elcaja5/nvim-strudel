@@ -4499,11 +4499,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   // === OTHER STRUDEL FUNCTIONS (minimal documentation) ===
   {
     name: 'activeLabel',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Active label state',
+    documentation: 'Internal function for managing active label state in the pattern system. Used for pattern identification and labeling.',
     signatures: [{
-      label: 'activeLabel(...)',
-      parameters: [],
+      label: 'activeLabel(label)',
+      parameters: [{ label: 'label', documentation: 'Label identifier' }],
     }],
   },
   {
@@ -4517,11 +4517,14 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'applyN',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Apply function N times',
+    documentation: 'Applies a function to a pattern N times. Useful for building up transformations iteratively.',
     signatures: [{
-      label: 'applyN(...)',
-      parameters: [],
+      label: 'applyN(n, fn)',
+      parameters: [
+        { label: 'n', documentation: 'Number of times to apply' },
+        { label: 'fn', documentation: 'Function to apply' },
+      ],
     }],
   },
   {
@@ -4544,11 +4547,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'band',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Bitwise AND',
+    documentation: 'Bitwise AND operation on pattern values. Combines two patterns using binary AND.',
     signatures: [{
-      label: 'band(...)',
-      parameters: [],
+      label: 'band(pattern)',
+      parameters: [{ label: 'pattern', documentation: 'Pattern to AND with' }],
     }],
   },
   {
@@ -4571,56 +4574,59 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'base64ToUnicode',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Decode base64 to unicode (internal)',
+    documentation: 'Internal utility function. Decodes a base64 string to unicode text. Used for code sharing/compression.',
     signatures: [{
-      label: 'base64ToUnicode(...)',
-      parameters: [],
+      label: 'base64ToUnicode(base64)',
+      parameters: [{ label: 'base64', documentation: 'Base64 encoded string' }],
     }],
   },
   {
     name: 'bbexpr',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Bytebeat expression',
+    documentation: 'Alias for byteBeatExpression - sets the bytebeat expression formula for audio synthesis.',
     signatures: [{
-      label: 'bbexpr(...)',
-      parameters: [],
+      label: 'bbexpr(expression)',
+      parameters: [{ label: 'expression', documentation: 'Bytebeat expression string, e.g. "t*(t>>8|t>>9)&46&t>>8"' }],
     }],
   },
   {
     name: 'bbst',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Bytebeat start time',
+    documentation: 'Alias for byteBeatStartTime - sets the start time offset for bytebeat synthesis.',
     signatures: [{
-      label: 'bbst(...)',
-      parameters: [],
+      label: 'bbst(time)',
+      parameters: [{ label: 'time', documentation: 'Start time offset' }],
     }],
   },
   {
     name: 'berlinWith',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Berlin school sequencer',
+    documentation: 'Berlin school style sequencer with custom function. Creates evolving patterns typical of Berlin school electronic music.',
     signatures: [{
-      label: 'berlinWith(...)',
-      parameters: [],
+      label: 'berlinWith(fn, pattern)',
+      parameters: [
+        { label: 'fn', documentation: 'Function to apply' },
+        { label: 'pattern', documentation: 'Base pattern' },
+      ],
     }],
   },
   {
     name: 'bind',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Monadic bind',
+    documentation: 'Functional programming bind/flatMap operation. Applies a function that returns a pattern to each value and flattens the result.',
     signatures: [{
-      label: 'bind(...)',
-      parameters: [],
+      label: 'bind(fn)',
+      parameters: [{ label: 'fn', documentation: 'Function that takes a value and returns a pattern' }],
     }],
   },
   {
     name: 'binshift',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Binary shift',
+    documentation: 'Binary shift operation on pattern values.',
     signatures: [{
-      label: 'binshift(...)',
-      parameters: [],
+      label: 'binshift(amount)',
+      parameters: [{ label: 'amount', documentation: 'Number of bits to shift' }],
     }],
   },
   {
@@ -4637,11 +4643,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'blshift',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Binary left shift',
+    documentation: 'Binary left shift operation on pattern values.',
     signatures: [{
-      label: 'blshift(...)',
-      parameters: [],
+      label: 'blshift(amount)',
+      parameters: [{ label: 'amount', documentation: 'Number of bits to shift left' }],
     }],
   },
   {
@@ -4655,20 +4661,20 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'brshift',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Binary right shift',
+    documentation: 'Binary right shift operation on pattern values.',
     signatures: [{
-      label: 'brshift(...)',
-      parameters: [],
+      label: 'brshift(amount)',
+      parameters: [{ label: 'amount', documentation: 'Number of bits to shift right' }],
     }],
   },
   {
     name: 'bxor',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Bitwise XOR',
+    documentation: 'Bitwise XOR (exclusive or) operation on pattern values.',
     signatures: [{
-      label: 'bxor(...)',
-      parameters: [],
+      label: 'bxor(pattern)',
+      parameters: [{ label: 'pattern', documentation: 'Pattern to XOR with' }],
     }],
   },
   {
@@ -4682,11 +4688,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'calculateSteps',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Calculate pattern steps (internal)',
+    documentation: 'Internal utility function. Calculates the number of steps in a pattern. Used for pattern analysis and visualization.',
     signatures: [{
-      label: 'calculateSteps(...)',
-      parameters: [],
+      label: 'calculateSteps(pattern)',
+      parameters: [{ label: 'pattern', documentation: 'Pattern to analyze' }],
     }],
   },
   {
@@ -4769,11 +4775,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'code2hash',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Code to URL hash (internal)',
+    documentation: 'Internal utility function. Converts Strudel code to a compressed URL hash for sharing. Used in the web REPL.',
     signatures: [{
-      label: 'code2hash(...)',
-      parameters: [],
+      label: 'code2hash(code)',
+      parameters: [{ label: 'code', documentation: 'Strudel code to compress' }],
     }],
   },
   {
@@ -4889,11 +4895,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'dictionary',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Create sample dictionary',
+    documentation: 'Creates a dictionary mapping names to sample banks or sounds. Used for organizing and accessing samples.',
     signatures: [{
-      label: 'dictionary(...)',
-      parameters: [],
+      label: 'dictionary(mapping)',
+      parameters: [{ label: 'mapping', documentation: 'Object mapping names to sample paths/banks' }],
     }],
   },
   {
@@ -4916,11 +4922,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'eish',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Equal interval scale halftone',
+    documentation: 'Xeno-harmonic tuning function. Sets the equal interval scale halftone/semitone size. Used for microtonal and alternative tuning systems.',
     signatures: [{
-      label: 'eish(...)',
-      parameters: [],
+      label: 'eish(semitoneRatio)',
+      parameters: [{ label: 'semitoneRatio', documentation: 'Ratio for each semitone step' }],
     }],
   },
   {
@@ -4969,11 +4975,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'expression',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Mathematical expression',
+    documentation: 'Evaluates a mathematical expression as a pattern. Can be used for dynamic value generation.',
     signatures: [{
-      label: 'expression(...)',
-      parameters: [],
+      label: 'expression(expr)',
+      parameters: [{ label: 'expr', documentation: 'Mathematical expression string' }],
     }],
   },
   {
@@ -5050,29 +5056,35 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'focusSpan',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Focus on time span',
+    documentation: 'Focuses the pattern query on a specific time span. Similar to zoom but works with absolute time spans rather than factors.',
     signatures: [{
-      label: 'focusSpan(...)',
-      parameters: [],
+      label: 'focusSpan(begin, end)',
+      parameters: [
+        { label: 'begin', documentation: 'Start time of the span' },
+        { label: 'end', documentation: 'End time of the span' },
+      ],
     }],
   },
   {
     name: 'focusspan',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Focus on time span',
+    documentation: 'Alias for focusSpan. Focuses the pattern query on a specific time span.',
     signatures: [{
-      label: 'focusspan(...)',
-      parameters: [],
+      label: 'focusspan(begin, end)',
+      parameters: [
+        { label: 'begin', documentation: 'Start time of the span' },
+        { label: 'end', documentation: 'End time of the span' },
+      ],
     }],
   },
   {
     name: 'fractionalArgs',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Fractional arguments (internal)',
+    documentation: 'Internal function for handling fractional arguments in pattern functions. Parses fractional notation.',
     signatures: [{
-      label: 'fractionalArgs(...)',
-      parameters: [],
+      label: 'fractionalArgs(args)',
+      parameters: [{ label: 'args', documentation: 'Arguments to parse' }],
     }],
   },
   {
@@ -5113,11 +5125,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'func',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Function wrapper',
+    documentation: 'Wraps a JavaScript function for use in patterns. Allows custom functions to work with the pattern system.',
     signatures: [{
-      label: 'func(...)',
-      parameters: [],
+      label: 'func(fn)',
+      parameters: [{ label: 'fn', documentation: 'JavaScript function to wrap' }],
     }],
   },
   {
@@ -5140,20 +5152,20 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'hash2code',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'URL hash to code (internal)',
+    documentation: 'Internal utility function. Decompresses a URL hash back to Strudel code. Used in the web REPL.',
     signatures: [{
-      label: 'hash2code(...)',
-      parameters: [],
+      label: 'hash2code(hash)',
+      parameters: [{ label: 'hash', documentation: 'Compressed URL hash' }],
     }],
   },
   {
     name: 'hbrick',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Spectral high brick',
+    documentation: 'SuperDirt spectral effect - brick wall filter for high frequencies. Removes frequencies above the threshold.',
     signatures: [{
-      label: 'hbrick(...)',
-      parameters: [],
+      label: 'hbrick(threshold)',
+      parameters: [{ label: 'threshold', documentation: 'Frequency threshold (0-1)' }],
     }],
   },
   {
@@ -5199,20 +5211,20 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'imag',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Imaginary component',
+    documentation: 'Extracts or sets the imaginary component of complex numbers. Used for spectral/FFT operations.',
     signatures: [{
-      label: 'imag(...)',
-      parameters: [],
+      label: 'imag(value)',
+      parameters: [{ label: 'value', documentation: 'Imaginary component value' }],
     }],
   },
   {
     name: 'kcutoff',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Karplus cutoff frequency',
+    documentation: 'Sets the cutoff frequency for Karplus-Strong string synthesis algorithm.',
     signatures: [{
-      label: 'kcutoff(...)',
-      parameters: [],
+      label: 'kcutoff(frequency)',
+      parameters: [{ label: 'frequency', documentation: 'Cutoff frequency in Hz' }],
     }],
   },
   {
@@ -5244,29 +5256,32 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'lbrick',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Spectral low brick',
+    documentation: 'SuperDirt spectral effect - brick wall filter for low frequencies. Removes frequencies below the threshold.',
     signatures: [{
-      label: 'lbrick(...)',
-      parameters: [],
+      label: 'lbrick(threshold)',
+      parameters: [{ label: 'threshold', documentation: 'Frequency threshold (0-1)' }],
     }],
   },
   {
     name: 'listRange',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'List range (internal)',
+    documentation: 'Internal utility function for creating a range list.',
     signatures: [{
-      label: 'listRange(...)',
-      parameters: [],
+      label: 'listRange(start, end)',
+      parameters: [
+        { label: 'start', documentation: 'Start value' },
+        { label: 'end', documentation: 'End value' },
+      ],
     }],
   },
   {
     name: 'logger',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Logger (internal)',
+    documentation: 'Internal logging utility for debugging patterns.',
     signatures: [{
-      label: 'logger(...)',
-      parameters: [],
+      label: 'logger(message)',
+      parameters: [{ label: 'message', documentation: 'Message to log' }],
     }],
   },
   {
@@ -5289,20 +5304,23 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'lsize',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Leslie size',
+    documentation: 'SuperDirt parameter - controls the size/room of the Leslie speaker effect.',
     signatures: [{
-      label: 'lsize(...)',
-      parameters: [],
+      label: 'lsize(size)',
+      parameters: [{ label: 'size', documentation: 'Leslie room size' }],
     }],
   },
   {
     name: 'mapArgs',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Map arguments (internal)',
+    documentation: 'Internal utility for mapping function arguments.',
     signatures: [{
-      label: 'mapArgs(...)',
-      parameters: [],
+      label: 'mapArgs(fn, args)',
+      parameters: [
+        { label: 'fn', documentation: 'Mapping function' },
+        { label: 'args', documentation: 'Arguments to map' },
+      ],
     }],
   },
   {
@@ -5325,11 +5343,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'midimap',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'MIDI control mapping',
+    documentation: 'Defines or uses a MIDI control mapping. Maps MIDI CC values to pattern parameters.',
     signatures: [{
-      label: 'midimap(...)',
-      parameters: [],
+      label: 'midimap(mapping)',
+      parameters: [{ label: 'mapping', documentation: 'MIDI mapping object or name' }],
     }],
   },
   {
@@ -5343,29 +5361,29 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'mini2ast',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Mini notation to AST (internal)',
+    documentation: 'Internal parser function. Parses mini notation string into an Abstract Syntax Tree. Used by the mini notation parser.',
     signatures: [{
-      label: 'mini2ast(...)',
-      parameters: [],
+      label: 'mini2ast(miniNotation)',
+      parameters: [{ label: 'miniNotation', documentation: 'Mini notation string to parse' }],
     }],
   },
   {
     name: 'miniAllStrings',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Mini notation all strings (internal)',
+    documentation: 'Internal parser function. Extracts all string values from mini notation. Used for parsing and analysis.',
     signatures: [{
-      label: 'miniAllStrings(...)',
-      parameters: [],
+      label: 'miniAllStrings(miniNotation)',
+      parameters: [{ label: 'miniNotation', documentation: 'Mini notation string' }],
     }],
   },
   {
     name: 'minify',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Minify code (internal)',
+    documentation: 'Internal utility function. Minifies/compresses Strudel code by removing whitespace and shortening identifiers.',
     signatures: [{
-      label: 'minify(...)',
-      parameters: [],
+      label: 'minify(code)',
+      parameters: [{ label: 'code', documentation: 'Strudel code to minify' }],
     }],
   },
   {
@@ -5397,29 +5415,29 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'numeralArgs',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Numeral arguments (internal)',
+    documentation: 'Internal function for parsing numeral arguments (Roman numerals, chord numerals) in pattern notation.',
     signatures: [{
-      label: 'numeralArgs(...)',
-      parameters: [],
+      label: 'numeralArgs(args)',
+      parameters: [{ label: 'args', documentation: 'Arguments to parse' }],
     }],
   },
   {
     name: 'octaveR',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Octave ratio',
+    documentation: 'Xeno-harmonic tuning function. Sets or gets the octave ratio (normally 2:1). Can be changed for non-octave-repeating scales like Bohlen-Pierce (3:1).',
     signatures: [{
-      label: 'octaveR(...)',
-      parameters: [],
+      label: 'octaveR(ratio)',
+      parameters: [{ label: 'ratio', documentation: 'Frequency ratio for one octave (default: 2)' }],
     }],
   },
   {
     name: 'octaves',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Octave range',
+    documentation: 'Sets or constrains the octave range for a pattern. Can be used with voicings or to limit the octave span of notes.',
     signatures: [{
-      label: 'octaves(...)',
-      parameters: [],
+      label: 'octaves(range)',
+      parameters: [{ label: 'range', documentation: 'Number of octaves or octave range' }],
     }],
   },
   {
@@ -5460,20 +5478,20 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'overgain',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Overdrive gain',
+    documentation: 'SuperDirt overdrive effect - controls the gain/drive amount for the overdrive distortion.',
     signatures: [{
-      label: 'overgain(...)',
-      parameters: [],
+      label: 'overgain(amount)',
+      parameters: [{ label: 'amount', documentation: 'Drive amount' }],
     }],
   },
   {
     name: 'overshape',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Overdrive shape',
+    documentation: 'SuperDirt overdrive effect - controls the waveshaping curve of the overdrive distortion.',
     signatures: [{
-      label: 'overshape(...)',
-      parameters: [],
+      label: 'overshape(amount)',
+      parameters: [{ label: 'amount', documentation: 'Shape amount (0-1)' }],
     }],
   },
   {
@@ -5487,47 +5505,47 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'pairs',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Create key-value pairs',
+    documentation: 'Creates key-value pairs from pattern values. Useful for creating structured data from patterns.',
     signatures: [{
-      label: 'pairs(...)',
-      parameters: [],
+      label: 'pairs(pattern)',
+      parameters: [{ label: 'pattern', documentation: 'Pattern to extract pairs from' }],
     }],
   },
   {
     name: 'panorient',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Pan orientation',
+    documentation: 'SuperDirt stereo parameter - controls the orientation of the stereo image. Used for multichannel spatialization.',
     signatures: [{
-      label: 'panorient(...)',
-      parameters: [],
+      label: 'panorient(value)',
+      parameters: [{ label: 'value', documentation: 'Orientation value' }],
     }],
   },
   {
     name: 'panspan',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Pan span',
+    documentation: 'SuperDirt stereo parameter - controls the span/width of the stereo image.',
     signatures: [{
-      label: 'panspan(...)',
-      parameters: [],
+      label: 'panspan(value)',
+      parameters: [{ label: 'value', documentation: 'Span value (0-1)' }],
     }],
   },
   {
     name: 'pansplay',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Pan splay',
+    documentation: 'SuperDirt stereo parameter - spreads sound across stereo field. Similar to stereo widening.',
     signatures: [{
-      label: 'pansplay(...)',
-      parameters: [],
+      label: 'pansplay(value)',
+      parameters: [{ label: 'value', documentation: 'Splay amount (0-1)' }],
     }],
   },
   {
     name: 'panwidth',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Pan width',
+    documentation: 'SuperDirt stereo parameter - controls the width of the stereo image.',
     signatures: [{
-      label: 'panwidth(...)',
-      parameters: [],
+      label: 'panwidth(value)',
+      parameters: [{ label: 'value', documentation: 'Width value (0-1)' }],
     }],
   },
   {
@@ -5550,11 +5568,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'patternifyAST',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Patternify AST (internal)',
+    documentation: 'Internal parser function. Converts an Abstract Syntax Tree into a Strudel pattern. Used by the mini notation parser.',
     signatures: [{
-      label: 'patternifyAST(...)',
-      parameters: [],
+      label: 'patternifyAST(ast)',
+      parameters: [{ label: 'ast', documentation: 'Abstract Syntax Tree to convert' }],
     }],
   },
   {
@@ -5647,10 +5665,10 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'pickmodOut',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Pickmod output (internal)',
+    documentation: 'Internal function for the pickmod system. Returns output state from pick modifications.',
     signatures: [{
-      label: 'pickmodOut(...)',
+      label: 'pickmodOut()',
       parameters: [],
     }],
   },
@@ -5782,11 +5800,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'real',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Real component',
+    documentation: 'Extracts or sets the real component of complex numbers. Used for spectral/FFT operations.',
     signatures: [{
-      label: 'real(...)',
-      parameters: [],
+      label: 'real(value)',
+      parameters: [{ label: 'value', documentation: 'Real component value' }],
     }],
   },
   {
@@ -5845,20 +5863,20 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'scaleTrans',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Scale transposition',
+    documentation: 'Transposes a pattern within a scale by the given number of scale degrees. Notes stay within the scale.',
     signatures: [{
-      label: 'scaleTrans(...)',
-      parameters: [],
+      label: 'scaleTrans(degrees)',
+      parameters: [{ label: 'degrees', documentation: 'Number of scale degrees to transpose' }],
     }],
   },
   {
     name: 'scram',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Scramble (alias)',
+    documentation: 'Alias for scramble - randomly rearrange pattern segments each cycle.',
     signatures: [{
-      label: 'scram(...)',
-      parameters: [],
+      label: 'scram(n)',
+      parameters: [{ label: 'n', documentation: 'Number of segments to scramble' }],
     }],
   },
   {
@@ -5872,19 +5890,19 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'semitone',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Semitone interval ratio',
+    documentation: 'Xeno-harmonic tuning function. Sets or gets the semitone interval ratio for microtonal tuning systems. In standard 12-TET, this is 2^(1/12).',
     signatures: [{
-      label: 'semitone(...)',
-      parameters: [],
+      label: 'semitone(ratio)',
+      parameters: [{ label: 'ratio', documentation: 'Frequency ratio for one semitone' }],
     }],
   },
   {
     name: 'seqPLoop',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Sequence pattern loop',
+    documentation: 'Creates a looping sequence of patterns. Similar to seq but with loop behavior control.',
     signatures: [{
-      label: 'seqPLoop(...)',
+      label: 'seqPLoop(...patterns)',
       parameters: [],
     }],
   },
@@ -5899,10 +5917,10 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'sequenceP',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Sequence pattern (internal)',
+    documentation: 'Internal pattern sequencing function. Creates a sequence from pattern objects.',
     signatures: [{
-      label: 'sequenceP(...)',
+      label: 'sequenceP(...patterns)',
       parameters: [],
     }],
   },
@@ -5917,11 +5935,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'shrinklist',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Shrink list (internal)',
+    documentation: 'Internal stepwise function. Shrinks a list of patterns. Used by other stepwise pattern functions.',
     signatures: [{
-      label: 'shrinklist(...)',
-      parameters: [],
+      label: 'shrinklist(patterns)',
+      parameters: [{ label: 'patterns', documentation: 'List of patterns to shrink' }],
     }],
   },
   {
@@ -5956,10 +5974,10 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'slowcatPrime',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Slowcat prime (internal)',
+    documentation: 'Internal variant of slowcat. Concatenates patterns one per cycle with prime number cycling behavior.',
     signatures: [{
-      label: 'slowcatPrime(...)',
+      label: 'slowcatPrime(...patterns)',
       parameters: [],
     }],
   },
@@ -5977,28 +5995,28 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'smear',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Spectral smear',
+    documentation: 'SuperDirt spectral effect - smears/blurs the frequency content of the audio over time.',
     signatures: [{
-      label: 'smear(...)',
-      parameters: [],
+      label: 'smear(amount)',
+      parameters: [{ label: 'amount', documentation: 'Smear amount' }],
     }],
   },
   {
     name: 'sol2note',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Solfege to note',
+    documentation: 'Convert solfege notation (do, re, mi, etc.) to note numbers.',
     signatures: [{
-      label: 'sol2note(...)',
-      parameters: [],
+      label: 'sol2note(solfege)',
+      parameters: [{ label: 'solfege', documentation: 'Solfege syllable (do, re, mi, fa, sol, la, si/ti)' }],
     }],
   },
   {
     name: 'songPtr',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Song pointer (internal)',
+    documentation: 'Internal function for managing song position/playhead.',
     signatures: [{
-      label: 'songPtr(...)',
+      label: 'songPtr()',
       parameters: [],
     }],
   },
@@ -6034,11 +6052,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'splitAt',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Split pattern at position',
+    documentation: 'Splits a pattern at a given position, returning two patterns: one before and one after the split point.',
     signatures: [{
-      label: 'splitAt(...)',
-      parameters: [],
+      label: 'splitAt(position)',
+      parameters: [{ label: 'position', documentation: 'Position to split at (0-1 within cycle)' }],
     }],
   },
   {
@@ -6055,47 +6073,50 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'stackBy',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Stack with function',
+    documentation: 'Stack patterns together, applying a function to combine them.',
     signatures: [{
-      label: 'stackBy(...)',
-      parameters: [],
+      label: 'stackBy(fn, patterns)',
+      parameters: [
+        { label: 'fn', documentation: 'Function to apply when stacking' },
+        { label: 'patterns', documentation: 'Patterns to stack' },
+      ],
     }],
   },
   {
     name: 'stackCentre',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Stack centered',
+    documentation: 'Stack patterns with center alignment.',
     signatures: [{
-      label: 'stackCentre(...)',
-      parameters: [],
+      label: 'stackCentre(...patterns)',
+      parameters: [{ label: 'patterns', documentation: 'Patterns to stack (center-aligned)' }],
     }],
   },
   {
     name: 'stackLeft',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Stack left-aligned',
+    documentation: 'Stack patterns with left alignment.',
     signatures: [{
-      label: 'stackLeft(...)',
-      parameters: [],
+      label: 'stackLeft(...patterns)',
+      parameters: [{ label: 'patterns', documentation: 'Patterns to stack (left-aligned)' }],
     }],
   },
   {
     name: 'stackRight',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Stack right-aligned',
+    documentation: 'Stack patterns with right alignment.',
     signatures: [{
-      label: 'stackRight(...)',
-      parameters: [],
+      label: 'stackRight(...patterns)',
+      parameters: [{ label: 'patterns', documentation: 'Patterns to stack (right-aligned)' }],
     }],
   },
   {
     name: 'steady',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Steady pattern',
+    documentation: 'Creates a steady/constant pattern that doesn\'t change over time.',
     signatures: [{
-      label: 'steady(...)',
-      parameters: [],
+      label: 'steady(value)',
+      parameters: [{ label: 'value', documentation: 'Constant value for the pattern' }],
     }],
   },
   {
@@ -6118,29 +6139,29 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'stepsPerOctave',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Microtonal steps per octave',
+    documentation: 'Xeno-harmonic tuning function. Sets the number of equal divisions of the octave for microtonal tuning. Standard is 12-TET (12 steps). Use for scales like 19-TET, 31-TET, etc.',
     signatures: [{
-      label: 'stepsPerOctave(...)',
-      parameters: [],
+      label: 'stepsPerOctave(steps)',
+      parameters: [{ label: 'steps', documentation: 'Number of equal steps per octave (e.g., 12, 19, 31)' }],
     }],
   },
   {
     name: 'strans',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Scale transpose',
+    documentation: 'Transposes notes by scale degrees within the current scale. Like mtranspose but may use different internals.',
     signatures: [{
-      label: 'strans(...)',
-      parameters: [],
+      label: 'strans(degrees)',
+      parameters: [{ label: 'degrees', documentation: 'Number of scale degrees to transpose' }],
     }],
   },
   {
     name: 'stringifyValues',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Stringify pattern values (internal)',
+    documentation: 'Internal utility function. Converts pattern values to their string representations. Used for debugging and display.',
     signatures: [{
-      label: 'stringifyValues(...)',
-      parameters: [],
+      label: 'stringifyValues(pattern)',
+      parameters: [{ label: 'pattern', documentation: 'Pattern whose values to stringify' }],
     }],
   },
   {
@@ -6216,11 +6237,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'tokenizeNote',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Tokenize note string (internal)',
+    documentation: 'Internal parser function. Tokenizes a note string into its components (note name, octave, accidentals). Used for note parsing.',
     signatures: [{
-      label: 'tokenizeNote(...)',
-      parameters: [],
+      label: 'tokenizeNote(noteString)',
+      parameters: [{ label: 'noteString', documentation: 'Note string to tokenize (e.g., "C#4")' }],
     }],
   },
   {
@@ -6234,11 +6255,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'trans',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Transpose',
+    documentation: 'Transposes notes by semitones. Similar to add but specifically for note transposition.',
     signatures: [{
-      label: 'trans(...)',
-      parameters: [],
+      label: 'trans(semitones)',
+      parameters: [{ label: 'semitones', documentation: 'Number of semitones to transpose' }],
     }],
   },
   {
@@ -6252,65 +6273,65 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'tsdelay',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Time-stretch delay',
+    documentation: 'SuperDirt delay parameter - controls time-stretch delay send level.',
     signatures: [{
-      label: 'tsdelay(...)',
-      parameters: [],
+      label: 'tsdelay(amount)',
+      parameters: [{ label: 'amount', documentation: 'Delay send amount (0-1)' }],
     }],
   },
   {
     name: 'unicodeToBase64',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Encode unicode to base64 (internal)',
+    documentation: 'Internal utility function. Encodes unicode text to a base64 string. Used for code sharing/compression.',
     signatures: [{
-      label: 'unicodeToBase64(...)',
-      parameters: [],
+      label: 'unicodeToBase64(text)',
+      parameters: [{ label: 'text', documentation: 'Unicode text to encode' }],
     }],
   },
   {
     name: 'uniq',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Remove duplicates',
+    documentation: 'Removes duplicate consecutive values from the pattern, keeping only unique adjacent events.',
     signatures: [{
-      label: 'uniq(...)',
+      label: 'uniq()',
       parameters: [],
     }],
   },
   {
     name: 'uniqsort',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Unique sorted values',
+    documentation: 'Returns unique values from the pattern, sorted in ascending order.',
     signatures: [{
-      label: 'uniqsort(...)',
+      label: 'uniqsort()',
       parameters: [],
     }],
   },
   {
     name: 'uniqsortr',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Unique reverse sorted',
+    documentation: 'Returns unique values from the pattern, sorted in descending (reverse) order.',
     signatures: [{
-      label: 'uniqsortr(...)',
+      label: 'uniqsortr()',
       parameters: [],
     }],
   },
   {
     name: 'valueToMidi',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Value to MIDI number',
+    documentation: 'Converts a note value (note name or number) to its MIDI note number representation.',
     signatures: [{
-      label: 'valueToMidi(...)',
-      parameters: [],
+      label: 'valueToMidi(value)',
+      parameters: [{ label: 'value', documentation: 'Note value to convert' }],
     }],
   },
   {
     name: 'vmod',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Vibrato depth (synonym for vibmod)',
+    documentation: 'Sets the vibrato depth in semitones. Synonym for `vibmod`. Only has an effect if `vibrato`, `vib`, or `v` is also set.\n\nExample:\n```js\nnote("a e").vib(4).vmod("<.25 .5 1 2 12>")\n```',
     signatures: [{
-      label: 'vmod(...)',
-      parameters: [],
+      label: 'vmod(depth)',
+      parameters: [{ label: 'depth', documentation: 'Vibrato depth in semitones' }],
     }],
   },
   {
@@ -6324,47 +6345,50 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'voicingAlias',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Define voicing alias',
+    documentation: 'Creates an alias for a voicing. Allows you to define custom names for chord voicings.',
     signatures: [{
-      label: 'voicingAlias(...)',
-      parameters: [],
+      label: 'voicingAlias(alias, voicing)',
+      parameters: [
+        { label: 'alias', documentation: 'Name for the alias' },
+        { label: 'voicing', documentation: 'Voicing to alias' },
+      ],
     }],
   },
   {
     name: 'warpatt',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Warp attack (alias)',
+    documentation: 'Alias for warpattack - attack time of the wavetable oscillator\'s warp envelope',
     signatures: [{
-      label: 'warpatt(...)',
-      parameters: [],
+      label: 'warpatt(time)',
+      parameters: [{ label: 'time', documentation: 'Attack time in seconds' }],
     }],
   },
   {
     name: 'warpdec',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Warp decay (alias)',
+    documentation: 'Alias for warpdecay - decay time of the wavetable oscillator\'s warp envelope',
     signatures: [{
-      label: 'warpdec(...)',
-      parameters: [],
+      label: 'warpdec(time)',
+      parameters: [{ label: 'time', documentation: 'Decay time in seconds' }],
     }],
   },
   {
     name: 'warprel',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Warp release (alias)',
+    documentation: 'Alias for warprelease - release time of the wavetable oscillator\'s warp envelope',
     signatures: [{
-      label: 'warprel(...)',
-      parameters: [],
+      label: 'warprel(time)',
+      parameters: [{ label: 'time', documentation: 'Release time in seconds' }],
     }],
   },
   {
     name: 'warpsus',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Warp sustain (alias)',
+    documentation: 'Alias for warpsustain - sustain level of the wavetable oscillator\'s warp envelope',
     signatures: [{
-      label: 'warpsus(...)',
-      parameters: [],
+      label: 'warpsus(level)',
+      parameters: [{ label: 'level', documentation: 'Sustain level (0 to 1)' }],
     }],
   },
   {
@@ -6414,11 +6438,11 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'withValue',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Transform value',
+    documentation: 'Applies a function to each value in the pattern. Like fmap but for the value portion of events.',
     signatures: [{
-      label: 'withValue(...)',
-      parameters: [],
+      label: 'withValue(fn)',
+      parameters: [{ label: 'fn', documentation: 'Function to apply to each value' }],
     }],
   },
   {
@@ -6432,47 +6456,47 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'wtatt',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Wavetable attack (alias)',
+    documentation: 'Alias for wtattack - attack time of the wavetable oscillator\'s position envelope',
     signatures: [{
-      label: 'wtatt(...)',
-      parameters: [],
+      label: 'wtatt(time)',
+      parameters: [{ label: 'time', documentation: 'Attack time in seconds' }],
     }],
   },
   {
     name: 'wtdec',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Wavetable decay (alias)',
+    documentation: 'Alias for wtdecay - decay time of the wavetable oscillator\'s position envelope',
     signatures: [{
-      label: 'wtdec(...)',
-      parameters: [],
+      label: 'wtdec(time)',
+      parameters: [{ label: 'time', documentation: 'Decay time in seconds' }],
     }],
   },
   {
     name: 'wtrel',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Wavetable release (alias)',
+    documentation: 'Alias for wtrelease - release time of the wavetable oscillator\'s position envelope',
     signatures: [{
-      label: 'wtrel(...)',
-      parameters: [],
+      label: 'wtrel(time)',
+      parameters: [{ label: 'time', documentation: 'Release time in seconds' }],
     }],
   },
   {
     name: 'wtsus',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Wavetable sustain (alias)',
+    documentation: 'Alias for wtsustain - sustain level of the wavetable oscillator\'s position envelope',
     signatures: [{
-      label: 'wtsus(...)',
-      parameters: [],
+      label: 'wtsus(level)',
+      parameters: [{ label: 'level', documentation: 'Sustain level (0 to 1)' }],
     }],
   },
   {
     name: 'xsdelay',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Cross-fading delay',
+    documentation: 'SuperDirt delay parameter - cross-fading delay send level',
     signatures: [{
-      label: 'xsdelay(...)',
-      parameters: [],
+      label: 'xsdelay(amount)',
+      parameters: [{ label: 'amount', documentation: 'Delay send amount (0-1)' }],
     }],
   },
   {
@@ -6522,20 +6546,26 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
   },
   {
     name: 'zoomArc',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Zoom into time arc',
+    documentation: 'Zooms into a specific time arc/span within the pattern. Used for focusing on a portion of the pattern cycle.',
     signatures: [{
-      label: 'zoomArc(...)',
-      parameters: [],
+      label: 'zoomArc(begin, end)',
+      parameters: [
+        { label: 'begin', documentation: 'Start of the arc (0-1)' },
+        { label: 'end', documentation: 'End of the arc (0-1)' },
+      ],
     }],
   },
   {
     name: 'zoomarc',
-    detail: 'Strudel function',
-    documentation: 'Strudel function. See strudel.cc for documentation.',
+    detail: 'Zoom into time arc',
+    documentation: 'Alias for zoomArc. Zooms into a specific time arc/span within the pattern.',
     signatures: [{
-      label: 'zoomarc(...)',
-      parameters: [],
+      label: 'zoomarc(begin, end)',
+      parameters: [
+        { label: 'begin', documentation: 'Start of the arc (0-1)' },
+        { label: 'end', documentation: 'End of the arc (0-1)' },
+      ],
     }],
   },
   {
@@ -6554,6 +6584,442 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
     signatures: [{
       label: 'zzfx(...params)',
       parameters: [],
+    }],
+  },
+  // === MISSING FUNCTIONS FROM STRUDEL DOCS ===
+  // Tremolo aliases
+  {
+    name: 'tremsync',
+    detail: 'Tremolo sync (alias)',
+    documentation: 'Alias for tremolosync - sync tremolo to cycles',
+    signatures: [{
+      label: 'tremsync(cycles)',
+      parameters: [{ label: 'cycles', documentation: 'Cycles to sync tremolo to' }],
+    }],
+  },
+  {
+    name: 'tremdepth',
+    detail: 'Tremolo depth (alias)',
+    documentation: 'Alias for tremolodepth - tremolo modulation depth',
+    signatures: [{
+      label: 'tremdepth(amount)',
+      parameters: [{ label: 'amount', documentation: 'Depth of tremolo (0-1)' }],
+    }],
+  },
+  {
+    name: 'tremskew',
+    detail: 'Tremolo skew (alias)',
+    documentation: 'Alias for tremoloskew - skew the tremolo waveform',
+    signatures: [{
+      label: 'tremskew(amount)',
+      parameters: [{ label: 'amount', documentation: 'Skew amount' }],
+    }],
+  },
+  {
+    name: 'tremphase',
+    detail: 'Tremolo phase (alias)',
+    documentation: 'Alias for tremolophase - phase of the tremolo LFO',
+    signatures: [{
+      label: 'tremphase(phase)',
+      parameters: [{ label: 'phase', documentation: 'Phase offset (0-1)' }],
+    }],
+  },
+  {
+    name: 'tremshape',
+    detail: 'Tremolo shape (alias)',
+    documentation: 'Alias for tremoloshape - shape of the tremolo waveform',
+    signatures: [{
+      label: 'tremshape(shape)',
+      parameters: [{ label: 'shape', documentation: 'Shape number (0, 1, 2, ...)' }],
+    }],
+  },
+  // Postgain alias
+  {
+    name: 'post',
+    detail: 'Post gain (alias)',
+    documentation: 'Alias for postgain - gain applied after effects',
+    signatures: [{
+      label: 'post(amount)',
+      parameters: [{ label: 'amount', documentation: 'Post-effects gain level' }],
+    }],
+  },
+  // MIDI input alias
+  {
+    name: 'midin',
+    detail: 'MIDI input (alias)',
+    documentation: 'Alias for midiin - receive MIDI input',
+    signatures: [{
+      label: 'midin()',
+      parameters: [],
+    }],
+  },
+  // Mouse Y signal
+  {
+    name: 'mousey',
+    detail: 'Mouse Y position (alias)',
+    documentation: 'Alias for mouseY - continuous signal of mouse Y position (0-1)',
+    signatures: [{
+      label: 'mousey',
+      documentation: 'Use with .range() to set output range',
+      parameters: [],
+    }],
+  },
+  // Tempo setting functions
+  {
+    name: 'setbpm',
+    detail: 'Set BPM (alias)',
+    documentation: 'Alias for setBpm - set tempo in beats per minute',
+    signatures: [{
+      label: 'setbpm(bpm)',
+      parameters: [{ label: 'bpm', documentation: 'Beats per minute' }],
+    }],
+  },
+  {
+    name: 'setBpm',
+    detail: 'Set BPM',
+    documentation: 'Set the tempo in beats per minute',
+    signatures: [{
+      label: 'setBpm(bpm)',
+      parameters: [{ label: 'bpm', documentation: 'Beats per minute (e.g., 120)' }],
+    }],
+  },
+  {
+    name: 'setcpm',
+    detail: 'Set CPM',
+    documentation: 'Set the tempo in cycles per minute',
+    signatures: [{
+      label: 'setcpm(cpm)',
+      parameters: [{ label: 'cpm', documentation: 'Cycles per minute' }],
+    }],
+  },
+  // Bipolar signal variants (-1 to 1)
+  {
+    name: 'sine2',
+    detail: 'Sine signal (bipolar)',
+    documentation: 'Continuous sine wave from -1 to 1',
+    signatures: [{
+      label: 'sine2',
+      documentation: 'Use with .range() to set output range',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'saw2',
+    detail: 'Sawtooth signal (bipolar)',
+    documentation: 'Continuous sawtooth wave from -1 to 1',
+    signatures: [{
+      label: 'saw2',
+      documentation: 'Use with .range() to set output range',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'tri2',
+    detail: 'Triangle signal (bipolar)',
+    documentation: 'Continuous triangle wave from -1 to 1',
+    signatures: [{
+      label: 'tri2',
+      documentation: 'Use with .range() to set output range',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'square2',
+    detail: 'Square signal (bipolar)',
+    documentation: 'Continuous square wave alternating between -1 and 1',
+    signatures: [{
+      label: 'square2',
+      documentation: 'Use with .range() to set output range',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'cosine2',
+    detail: 'Cosine signal (bipolar)',
+    documentation: 'Continuous cosine wave from -1 to 1',
+    signatures: [{
+      label: 'cosine2',
+      documentation: 'Use with .range() to set output range',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'rand2',
+    detail: 'Random signal (bipolar)',
+    documentation: 'Continuous random values from -1 to 1',
+    signatures: [{
+      label: 'rand2',
+      documentation: 'Use with .range() to set output range',
+      parameters: [],
+    }],
+  },
+  // Duck attack alias
+  {
+    name: 'duckatt',
+    detail: 'Duck attack (alias)',
+    documentation: 'Alias for duckattack - attack time for ducking/sidechain',
+    signatures: [{
+      label: 'duckatt(time)',
+      parameters: [{ label: 'time', documentation: 'Attack time in seconds' }],
+    }],
+  },
+  // Visualization functions
+  {
+    name: 'pianoroll',
+    detail: 'Piano roll visualization',
+    documentation: 'Display a scrolling piano roll visualization',
+    signatures: [{
+      label: 'pianoroll()',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'punchcard',
+    detail: 'Punchcard visualization',
+    documentation: 'Display a punchcard-style visualization',
+    signatures: [{
+      label: 'punchcard()',
+      parameters: [],
+    }],
+  },
+  {
+    name: '_pianoroll',
+    detail: 'Inline piano roll',
+    documentation: 'Display an inline piano roll visualization',
+    signatures: [{
+      label: '_pianoroll()',
+      parameters: [],
+    }],
+  },
+  {
+    name: '_punchcard',
+    detail: 'Inline punchcard',
+    documentation: 'Display an inline punchcard visualization',
+    signatures: [{
+      label: '_punchcard()',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'spiral',
+    detail: 'Spiral visualization',
+    documentation: 'Display a spiral visualization',
+    signatures: [{
+      label: 'spiral()',
+      parameters: [],
+    }],
+  },
+  {
+    name: '_spiral',
+    detail: 'Inline spiral',
+    documentation: 'Display an inline spiral visualization',
+    signatures: [{
+      label: '_spiral()',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'scope',
+    detail: 'Oscilloscope',
+    documentation: 'Display an oscilloscope visualization',
+    signatures: [{
+      label: 'scope()',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'tscope',
+    detail: 'Triggered oscilloscope',
+    documentation: 'Alias for scope - triggered oscilloscope visualization',
+    signatures: [{
+      label: 'tscope()',
+      parameters: [],
+    }],
+  },
+  {
+    name: '_scope',
+    detail: 'Inline oscilloscope',
+    documentation: 'Display an inline oscilloscope visualization',
+    signatures: [{
+      label: '_scope()',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'pitchwheel',
+    detail: 'Pitch wheel visualization',
+    documentation: 'Display a pitch circle visualization',
+    signatures: [{
+      label: 'pitchwheel()',
+      parameters: [],
+    }],
+  },
+  {
+    name: '_pitchwheel',
+    detail: 'Inline pitch wheel',
+    documentation: 'Display an inline pitch circle visualization',
+    signatures: [{
+      label: '_pitchwheel()',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'spectrum',
+    detail: 'Spectrum analyzer',
+    documentation: 'Display a spectrum analyzer visualization',
+    signatures: [{
+      label: 'spectrum()',
+      parameters: [],
+    }],
+  },
+  {
+    name: '_spectrum',
+    detail: 'Inline spectrum analyzer',
+    documentation: 'Display an inline spectrum analyzer visualization',
+    signatures: [{
+      label: '_spectrum()',
+      parameters: [],
+    }],
+  },
+  // Noise types
+  {
+    name: 'crackle',
+    detail: 'Crackle noise',
+    documentation: 'Crackle noise oscillator',
+    signatures: [{
+      label: 'crackle',
+      documentation: 'Use .density() to control crackle rate',
+      parameters: [],
+    }],
+  },
+  // Sample loading
+  {
+    name: 'samples',
+    detail: 'Load samples',
+    documentation: 'Load custom sample maps from URLs or objects',
+    signatures: [{
+      label: 'samples(sampleMap)',
+      parameters: [{ label: 'sampleMap', documentation: 'Object mapping sample names to URLs, or URL to sample pack' }],
+    }, {
+      label: 'samples(url, prefix)',
+      parameters: [
+        { label: 'url', documentation: 'URL to sample pack or GitHub repo' },
+        { label: 'prefix', documentation: 'Optional prefix for sample names' },
+      ],
+    }],
+  },
+  {
+    name: 'soundAlias',
+    detail: 'Create sound alias',
+    documentation: 'Create an alias for a sound/sample name',
+    signatures: [{
+      label: 'soundAlias(aliases)',
+      parameters: [{ label: 'aliases', documentation: 'Object mapping alias names to sound names' }],
+    }],
+  },
+  // Register function
+  {
+    name: 'register',
+    detail: 'Register custom function',
+    documentation: 'Register a custom function to be available as a pattern method',
+    signatures: [{
+      label: 'register(name, function)',
+      parameters: [
+        { label: 'name', documentation: 'Name of the function to register' },
+        { label: 'function', documentation: 'Function implementation' },
+      ],
+    }],
+  },
+  // OSC output
+  {
+    name: 'osc',
+    detail: 'OSC output',
+    documentation: 'Send pattern events via OSC (Open Sound Control)',
+    signatures: [{
+      label: 'osc()',
+      parameters: [],
+    }],
+  },
+  // MQTT output
+  {
+    name: 'mqtt',
+    detail: 'MQTT output',
+    documentation: 'Send pattern events via MQTT',
+    signatures: [{
+      label: 'mqtt(topic)',
+      parameters: [{ label: 'topic', documentation: 'MQTT topic to publish to' }],
+    }],
+  },
+  // MIDI maps
+  {
+    name: 'midimaps',
+    detail: 'Define MIDI mappings',
+    documentation: 'Define custom MIDI CC mappings',
+    signatures: [{
+      label: 'midimaps(mappings)',
+      parameters: [{ label: 'mappings', documentation: 'Object mapping control names to CC numbers' }],
+    }],
+  },
+  {
+    name: 'defaultmidimap',
+    detail: 'Default MIDI map',
+    documentation: 'Use the default MIDI mapping',
+    signatures: [{
+      label: 'defaultmidimap()',
+      parameters: [],
+    }],
+  },
+  // CSS styling
+  {
+    name: 'markcss',
+    detail: 'CSS for highlighting',
+    documentation: 'Set CSS styles for event highlighting/visualization',
+    signatures: [{
+      label: 'markcss(css)',
+      parameters: [{ label: 'css', documentation: 'CSS string for styling highlighted elements' }],
+    }],
+  },
+  // Amplitude modulation
+  {
+    name: 'am',
+    detail: 'Amplitude modulation',
+    documentation: 'Apply amplitude modulation',
+    signatures: [{
+      label: 'am(frequency)',
+      parameters: [{ label: 'frequency', documentation: 'Modulation frequency in Hz' }],
+    }],
+  },
+  // Euclidean legato
+  {
+    name: 'euclidLegato',
+    detail: 'Euclidean legato',
+    documentation: 'Euclidean rhythm with legato (connected notes)',
+    signatures: [{
+      label: 'euclidLegato(pulses, steps)',
+      parameters: [
+        { label: 'pulses', documentation: 'Number of pulses/hits' },
+        { label: 'steps', documentation: 'Total number of steps' },
+      ],
+    }, {
+      label: 'euclidLegato(pulses, steps, rotation)',
+      parameters: [
+        { label: 'pulses', documentation: 'Number of pulses/hits' },
+        { label: 'steps', documentation: 'Total number of steps' },
+        { label: 'rotation', documentation: 'Rotation offset' },
+      ],
+    }],
+  },
+  // MIDI output
+  {
+    name: 'midi',
+    detail: 'MIDI output',
+    documentation: 'Send pattern events to MIDI output',
+    signatures: [{
+      label: 'midi()',
+      parameters: [],
+    }, {
+      label: 'midi(output)',
+      parameters: [{ label: 'output', documentation: 'MIDI output device name' }],
     }],
   },
 
