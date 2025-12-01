@@ -60,7 +60,7 @@ export class StrudelTcpServer {
           this.send(socket, {
             type: 'status',
             playing: false,
-            stopped: true,
+            paused: false,
             cycle: 0,
             cps: 1,
           });

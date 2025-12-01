@@ -53,7 +53,7 @@ export class StrudelWebSocketServer {
           this.send(ws, {
             type: 'status',
             playing: false,
-            stopped: true,
+            paused: false,
             cycle: 0,
             cps: 1,
           });

@@ -857,19 +857,18 @@ local function on_status(msg)
   local was_playing = state.is_playing
   state.is_playing = msg.playing or false
   
-  -- If enabled and started playing, show window
-  if state.enabled and state.is_playing and not was_playing then
-    vim.schedule(function()
-      show_window()
-    end)
-  end
-  
-  -- Only hide on stop (not pause) - server sends stopped=true when fully stopped
-  -- Also check was_playing to avoid hiding on initial connection or when already hidden
-  if state.enabled and msg.stopped and was_playing then
-    vim.schedule(function()
-      hide_window()
-    end)
+  if state.enabled then
+    if state.is_playing and not was_playing then
+      -- Started playing - show window
+      vim.schedule(function()
+        show_window()
+      end)
+    elseif not state.is_playing and was_playing then
+      -- Stopped - hide window
+      vim.schedule(function()
+        hide_window()
+      end)
+    end
   end
 end
 
