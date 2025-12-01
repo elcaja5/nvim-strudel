@@ -961,7 +961,15 @@ hide_window = function()
       vim.cmd('quit')
       return
     end
-    vim.api.nvim_win_close(state.winid, true)
+    -- Use pcall in case this is the last window (race condition)
+    local ok, err = pcall(vim.api.nvim_win_close, state.winid, true)
+    if not ok then
+      -- If we can't close the window, it's probably the last one - quit
+      if err and err:match('E444') then
+        vim.cmd('quit')
+        return
+      end
+    end
   end
 
   state.winid = nil
