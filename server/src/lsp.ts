@@ -1961,6 +1961,1653 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
       parameters: [{ label: 'options', documentation: 'Granular synthesis options' }],
     }],
   },
+  // === AUTO-GENERATED FROM STRUDEL JSDOC ===
+  {
+    name: 'wtenv',
+    detail: 'Amount of envelope applied wavetable oscillator\'s position e',
+    documentation: 'Amount of envelope applied wavetable oscillator\'s position envelope',
+    signatures: [{
+      label: 'wtenv(amount)',
+      parameters: [
+        { label: 'amount', documentation: 'between 0 and 1' }
+      ],
+    }],
+  },
+  {
+    name: 'wtattack',
+    detail: 'Attack time of the wavetable oscillator\'s position envelope',
+    documentation: 'Attack time of the wavetable oscillator\'s position envelope',
+    signatures: [{
+      label: 'wtattack(time)',
+      parameters: [
+        { label: 'time', documentation: 'attack time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'wtdecay',
+    detail: 'Decay time of the wavetable oscillator\'s position envelope',
+    documentation: 'Decay time of the wavetable oscillator\'s position envelope',
+    signatures: [{
+      label: 'wtdecay(time)',
+      parameters: [
+        { label: 'time', documentation: 'decay time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'wtsustain',
+    detail: 'Sustain time of the wavetable oscillator\'s position envelope',
+    documentation: 'Sustain time of the wavetable oscillator\'s position envelope',
+    signatures: [{
+      label: 'wtsustain(gain)',
+      parameters: [
+        { label: 'gain', documentation: 'sustain level (0 to 1)' }
+      ],
+    }],
+  },
+  {
+    name: 'wtrelease',
+    detail: 'Release time of the wavetable oscillator\'s position envelope',
+    documentation: 'Release time of the wavetable oscillator\'s position envelope',
+    signatures: [{
+      label: 'wtrelease(time)',
+      parameters: [
+        { label: 'time', documentation: 'release time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'wtrate',
+    detail: 'Rate of the LFO for the wavetable oscillator\'s position',
+    documentation: 'Rate of the LFO for the wavetable oscillator\'s position',
+    signatures: [{
+      label: 'wtrate(rate)',
+      parameters: [
+        { label: 'rate', documentation: 'rate in hertz' }
+      ],
+    }],
+  },
+  {
+    name: 'wtsync',
+    detail: 'cycle synced rate of the LFO for the wavetable oscillator\'s ',
+    documentation: 'cycle synced rate of the LFO for the wavetable oscillator\'s position',
+    signatures: [{
+      label: 'wtsync(rate)',
+      parameters: [
+        { label: 'rate', documentation: 'rate in cycles' }
+      ],
+    }],
+  },
+  {
+    name: 'wtdepth',
+    detail: 'Depth of the LFO for the wavetable oscillator\'s position',
+    documentation: 'Depth of the LFO for the wavetable oscillator\'s position',
+    signatures: [{
+      label: 'wtdepth(depth)',
+      parameters: [
+        { label: 'depth', documentation: 'depth of modulation' }
+      ],
+    }],
+  },
+  {
+    name: 'wtshape',
+    detail: 'Shape of the LFO for the wavetable oscillator\'s position',
+    documentation: 'Shape of the LFO for the wavetable oscillator\'s position',
+    signatures: [{
+      label: 'wtshape(shape)',
+      parameters: [
+        { label: 'shape', documentation: 'Shape of the lfo (0, 1, 2, ..)' }
+      ],
+    }],
+  },
+  {
+    name: 'wtdc',
+    detail: 'DC offset of the LFO for the wavetable oscillator\'s position',
+    documentation: 'DC offset of the LFO for the wavetable oscillator\'s position',
+    signatures: [{
+      label: 'wtdc(dcoffset)',
+      parameters: [
+        { label: 'dcoffset', documentation: 'dc offset. set to 0 for unipolar' }
+      ],
+    }],
+  },
+  {
+    name: 'wtskew',
+    detail: 'Skew of the LFO for the wavetable oscillator\'s position',
+    documentation: 'Skew of the LFO for the wavetable oscillator\'s position',
+    signatures: [{
+      label: 'wtskew(skew)',
+      parameters: [
+        { label: 'skew', documentation: 'How much to bend the LFO shape' }
+      ],
+    }],
+  },
+  {
+    name: 'warp',
+    detail: 'Amount of warp (alteration of the waveform) to apply to the ',
+    documentation: 'Amount of warp (alteration of the waveform) to apply to the wavetable oscillator .',
+    signatures: [{
+      label: 'warp(amount)',
+      parameters: [
+        { label: 'amount', documentation: 'Warp of the wavetable from 0 to 1' }
+      ],
+    }],
+  },
+  {
+    name: 'warpattack',
+    detail: 'Attack time of the wavetable oscillator\'s warp envelope',
+    documentation: 'Attack time of the wavetable oscillator\'s warp envelope',
+    signatures: [{
+      label: 'warpattack(time)',
+      parameters: [
+        { label: 'time', documentation: 'attack time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'warpdecay',
+    detail: 'Decay time of the wavetable oscillator\'s warp envelope',
+    documentation: 'Decay time of the wavetable oscillator\'s warp envelope',
+    signatures: [{
+      label: 'warpdecay(time)',
+      parameters: [
+        { label: 'time', documentation: 'decay time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'warpsustain',
+    detail: 'Sustain time of the wavetable oscillator\'s warp envelope',
+    documentation: 'Sustain time of the wavetable oscillator\'s warp envelope',
+    signatures: [{
+      label: 'warpsustain(gain)',
+      parameters: [
+        { label: 'gain', documentation: 'sustain level (0 to 1)' }
+      ],
+    }],
+  },
+  {
+    name: 'warprelease',
+    detail: 'Release time of the wavetable oscillator\'s warp envelope',
+    documentation: 'Release time of the wavetable oscillator\'s warp envelope',
+    signatures: [{
+      label: 'warprelease(time)',
+      parameters: [
+        { label: 'time', documentation: 'release time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'warprate',
+    detail: 'Rate of the LFO for the wavetable oscillator\'s warp',
+    documentation: 'Rate of the LFO for the wavetable oscillator\'s warp',
+    signatures: [{
+      label: 'warprate(rate)',
+      parameters: [
+        { label: 'rate', documentation: 'rate in hertz' }
+      ],
+    }],
+  },
+  {
+    name: 'warpdepth',
+    detail: 'Depth of the LFO for the wavetable oscillator\'s warp',
+    documentation: 'Depth of the LFO for the wavetable oscillator\'s warp',
+    signatures: [{
+      label: 'warpdepth(depth)',
+      parameters: [
+        { label: 'depth', documentation: 'depth of modulation' }
+      ],
+    }],
+  },
+  {
+    name: 'warpshape',
+    detail: 'Shape of the LFO for the wavetable oscillator\'s warp',
+    documentation: 'Shape of the LFO for the wavetable oscillator\'s warp',
+    signatures: [{
+      label: 'warpshape(shape)',
+      parameters: [
+        { label: 'shape', documentation: 'Shape of the lfo (0, 1, 2, ..)' }
+      ],
+    }],
+  },
+  {
+    name: 'warpdc',
+    detail: 'DC offset of the LFO for the wavetable oscillator\'s warp',
+    documentation: 'DC offset of the LFO for the wavetable oscillator\'s warp',
+    signatures: [{
+      label: 'warpdc(dcoffset)',
+      parameters: [
+        { label: 'dcoffset', documentation: 'dc offset. set to 0 for unipolar' }
+      ],
+    }],
+  },
+  {
+    name: 'warpskew',
+    detail: 'Skew of the LFO for the wavetable oscillator\'s warp',
+    documentation: 'Skew of the LFO for the wavetable oscillator\'s warp',
+    signatures: [{
+      label: 'warpskew(skew)',
+      parameters: [
+        { label: 'skew', documentation: 'How much to bend the LFO shape' }
+      ],
+    }],
+  },
+  {
+    name: 'warpmode',
+    detail: 'Type of warp (alteration of the waveform) to apply to the wa',
+    documentation: 'Type of warp (alteration of the waveform) to apply to the wavetable oscillator. The current options are: none, asym, bendp, bendm, bendmp, sync, quant, fold, pwm, orbit, spin, chaos, primes, binary, brownian, reciprocal, wormhole, logistic, sigmoid, fractal, flip .',
+    signatures: [{
+      label: 'warpmode(mode)',
+      parameters: [
+        { label: 'mode', documentation: 'Warp mode' }
+      ],
+    }],
+  },
+  {
+    name: 'wtphaserand',
+    detail: 'Amount of randomness of the initial phase of the wavetable o',
+    documentation: 'Amount of randomness of the initial phase of the wavetable oscillator.',
+    signatures: [{
+      label: 'wtphaserand(amount)',
+      parameters: [
+        { label: 'amount', documentation: 'Randomness of the initial phase. Between 0 (not random) and 1 (fully random)' }
+      ],
+    }],
+  },
+  {
+    name: 'warpenv',
+    detail: 'Amount of envelope applied wavetable oscillator\'s position e',
+    documentation: 'Amount of envelope applied wavetable oscillator\'s position envelope',
+    signatures: [{
+      label: 'warpenv(amount)',
+      parameters: [
+        { label: 'amount', documentation: 'between 0 and 1' }
+      ],
+    }],
+  },
+  {
+    name: 'warpsync',
+    detail: 'cycle synced rate of the LFO for the wavetable warp position',
+    documentation: 'cycle synced rate of the LFO for the wavetable warp position',
+    signatures: [{
+      label: 'warpsync(rate)',
+      parameters: [
+        { label: 'rate', documentation: 'rate in cycles' }
+      ],
+    }],
+  },
+  {
+    name: 'source',
+    detail: 'Define a custom webaudio node to use as a sound source',
+    documentation: 'Define a custom webaudio node to use as a sound source.',
+    signatures: [{
+      label: 'source(getSource)',
+      parameters: [
+        { label: 'getSource', documentation: '* @synonyms src' }
+      ],
+    }],
+  },
+  {
+    name: 'accelerate',
+    detail: 'A pattern of numbers that speed up (or slow down) samples wh',
+    documentation: 'A pattern of numbers that speed up (or slow down) samples while they play. Currently only supported by osc / superdirt.',
+    signatures: [{
+      label: 'accelerate(amount)',
+      parameters: [
+        { label: 'amount', documentation: 'acceleration.' }
+      ],
+    }],
+  },
+  {
+    name: 'postgain',
+    detail: 'Gain applied after all effects have been processed',
+    documentation: 'Gain applied after all effects have been processed. .',
+    signatures: [{
+      label: 'postgain()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'fmenv',
+    detail: 'Ramp type of fm envelope',
+    documentation: 'Ramp type of fm envelope. Exp might be a bit broken.. . . . . ._',
+    signatures: [{
+      label: 'fmenv(type)',
+      parameters: [
+        { label: 'type', documentation: 'lin | exp' }
+      ],
+    }],
+  },
+  {
+    name: 'fmattack',
+    detail: 'Attack time for the FM envelope: time it takes to reach maxi',
+    documentation: 'Attack time for the FM envelope: time it takes to reach maximum modulation . . ._',
+    signatures: [{
+      label: 'fmattack(time)',
+      parameters: [
+        { label: 'time', documentation: 'attack time' }
+      ],
+    }],
+  },
+  {
+    name: 'fmwave',
+    detail: 'Waveform of the fm modulator)',
+    documentation: 'Waveform of the fm modulator).).',
+    signatures: [{
+      label: 'fmwave(wave)',
+      parameters: [
+        { label: 'wave', documentation: 'waveform' }
+      ],
+    }],
+  },
+  {
+    name: 'fmdecay',
+    detail: 'Decay time for the FM envelope: seconds until the sustain le',
+    documentation: 'Decay time for the FM envelope: seconds until the sustain level is reached after the attack phase. . . . ._',
+    signatures: [{
+      label: 'fmdecay(time)',
+      parameters: [
+        { label: 'time', documentation: 'decay time' }
+      ],
+    }],
+  },
+  {
+    name: 'fmsustain',
+    detail: 'Sustain level for the FM envelope: how much modulation is ap',
+    documentation: 'Sustain level for the FM envelope: how much modulation is applied after the decay phase . . . ._',
+    signatures: [{
+      label: 'fmsustain(level)',
+      parameters: [
+        { label: 'level', documentation: 'sustain level' }
+      ],
+    }],
+  },
+  {
+    name: 'chorus',
+    detail: 'mix control for the chorus effect',
+    documentation: 'mix control for the chorus effect',
+    signatures: [{
+      label: 'chorus(chorus)',
+      parameters: [
+        { label: 'chorus', documentation: 'mix amount between 0 and 1' }
+      ],
+    }],
+  },
+  {
+    name: 'bpq',
+    detail: 'Sets the **b**and-**p**ass **q**-factor (resonance)',
+    documentation: 'Sets the **b**and-**p**ass **q**-factor (resonance). / // currently an alias of \'bandq\' https://codeberg.org/uzu/strudel/issues/496 // [\'bpq\'], export const { bandq, bpq } =; /** A pattern of numbers from 0 to 1. Skips the beginning of each sample, e.g. `0.25` to cut off the first quarter from each sample.',
+    signatures: [{
+      label: 'bpq(q, amount)',
+      parameters: [
+        { label: 'q', documentation: 'q factor' },
+        { label: 'amount', documentation: 'between 0 and 1, where 1 is the length of the sample' }
+      ],
+    }],
+  },
+  {
+    name: 'loop',
+    detail: 'Loops the sample',
+    documentation: 'Loops the sample. Note that the tempo of the loop is not synced with the cycle tempo. To change the loop region, use loopBegin / loopEnd.',
+    signatures: [{
+      label: 'loop(on)',
+      parameters: [
+        { label: 'on', documentation: 'If 1, the sample is looped' }
+      ],
+    }],
+  },
+  {
+    name: 'loopBegin',
+    detail: 'Begin to loop at a specific point in the sample (inbetween `',
+    documentation: 'Begin to loop at a specific point in the sample (inbetween `begin` and `end`). Note that the loop point must be inbetween `begin` and `end`, and before `loopEnd`! Note: Samples starting with wt_ will automatically loop! (wt = wavetable) .._',
+    signatures: [{
+      label: 'loopBegin(time)',
+      parameters: [
+        { label: 'time', documentation: 'between 0 and 1, where 1 is the length of the sample' }
+      ],
+    }],
+  },
+  {
+    name: 'loopEnd',
+    detail: 'End the looping section at a specific point in the sample (i',
+    documentation: 'End the looping section at a specific point in the sample (inbetween `begin` and `end`). Note that the loop point must be inbetween `begin` and `end`, and after `loopBegin`! .._',
+    signatures: [{
+      label: 'loopEnd(time)',
+      parameters: [
+        { label: 'time', documentation: 'between 0 and 1, where 1 is the length of the sample' }
+      ],
+    }],
+  },
+  {
+    name: 'tremolosync',
+    detail: 'Modulate the amplitude of a sound with a continuous waveform',
+    documentation: 'Modulate the amplitude of a sound with a continuous waveform).',
+    signatures: [{
+      label: 'tremolosync(cycles)',
+      parameters: [
+        { label: 'cycles', documentation: 'modulation speed in cycles' }
+      ],
+    }],
+  },
+  {
+    name: 'tremolodepth',
+    detail: 'Depth of amplitude modulation)',
+    documentation: 'Depth of amplitude modulation).',
+    signatures: [{
+      label: 'tremolodepth(depth)',
+      parameters: [
+        { label: 'depth', documentation: '* @example' }
+      ],
+    }],
+  },
+  {
+    name: 'tremoloskew',
+    detail: 'Alter the shape of the modulation waveform',
+    documentation: 'Alter the shape of the modulation waveform',
+    signatures: [{
+      label: 'tremoloskew(amount)',
+      parameters: [
+        { label: 'amount', documentation: 'between 0 & 1, the shape of the waveform' }
+      ],
+    }],
+  },
+  {
+    name: 'tremolophase',
+    detail: 'Alter the phase of the modulation waveform',
+    documentation: 'Alter the phase of the modulation waveform',
+    signatures: [{
+      label: 'tremolophase(offset)',
+      parameters: [
+        { label: 'offset', documentation: 'the offset in cycles of the modulation' }
+      ],
+    }],
+  },
+  {
+    name: 'tremoloshape',
+    detail: 'Shape of amplitude modulation',
+    documentation: 'Shape of amplitude modulation',
+    signatures: [{
+      label: 'tremoloshape(shape)',
+      parameters: [
+        { label: 'shape', documentation: 'tri | square | sine | saw | ramp' }
+      ],
+    }],
+  },
+  {
+    name: 'drive',
+    detail: 'Filter overdrive for supported filter types)',
+    documentation: 'Filter overdrive for supported filter types).',
+    signatures: [{
+      label: 'drive(amount)',
+      parameters: [
+        { label: 'amount', documentation: '* @example' }
+      ],
+    }],
+  },
+  {
+    name: 'duckorbit',
+    detail: 'Modulate the amplitude of an orbit to create a "sidechain" l',
+    documentation: 'Modulate the amplitude of an orbit to create a "sidechain" like effect. Can be applied to multiple orbits with the \':\' mininotation, e.g. `` $:). $: $:). $: $:',
+    signatures: [{
+      label: 'duckorbit(orbit)',
+      parameters: [
+        { label: 'orbit', documentation: 'target orbit' }
+      ],
+    }],
+  },
+  {
+    name: 'duckdepth',
+    detail: 'The amount of ducking applied to target orbit Can vary acros',
+    documentation: 'The amount of ducking applied to target orbit Can vary across orbits with the \':\' mininotation, e.g. ``. Note: this requires first applying the effect to multiple orbits with e.g. ``.).,) $:). $: $:',
+    signatures: [{
+      label: 'duckdepth(depth)',
+      parameters: [
+        { label: 'depth', documentation: 'depth of modulation from 0 to 1' }
+      ],
+    }],
+  },
+  {
+    name: 'duckonset',
+    detail: 'The time required for the ducked to reach their lowest volum',
+    documentation: 'The time required for the ducked to reach their lowest volume. Can be used to prevent clicking or for creative rhythmic effects. Can vary across orbits with the \':\' mininotation, e.g. ``. Note: this requires first applying the effect to multiple orbits with e.g. ``. // Clicks sound: duckerWithClick: // No clicks sound: duckerWithoutClick: // Rhythmic noise: // used rhythmically with 0.3 onset below hhat: ducker:',
+    signatures: [{
+      label: 'duckonset(time)',
+      parameters: [
+        { label: 'time', documentation: 'The onset time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'duckattack',
+    detail: 'The time required for the ducked to return to their normal v',
+    documentation: 'The time required for the ducked to return to their normal volume. Can vary across orbits with the \':\' mininotation, e.g. ``. Note: this requires first applying the effect to multiple orbits with e.g. ``. sound:). ducker: moreduck:). lessduck: ducker:',
+    signatures: [{
+      label: 'duckattack(time)',
+      parameters: [
+        { label: 'time', documentation: 'The attack time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'byteBeatExpression',
+    detail: 'Create byte beats with custom expressions\')',
+    documentation: 'Create byte beats with custom expressions\')',
+    signatures: [{
+      label: 'byteBeatExpression(byteBeatExpression)',
+      parameters: [
+        { label: 'byteBeatExpression', documentation: 'bitwise expression for creating bytebeat' }
+      ],
+    }],
+  },
+  {
+    name: 'byteBeatStartTime',
+    detail: 'Create byte beats with custom expressions)',
+    documentation: 'Create byte beats with custom expressions).)._',
+    signatures: [{
+      label: 'byteBeatStartTime(byteBeatStartTime)',
+      parameters: [
+        { label: 'byteBeatStartTime', documentation: 'in samples (t)' }
+      ],
+    }],
+  },
+  {
+    name: 'channels',
+    detail: 'Allows you to set the output channels on the interface',
+    documentation: 'Allows you to set the output channels on the interface',
+    signatures: [{
+      label: 'channels(channels)',
+      parameters: [
+        { label: 'channels', documentation: 'pattern the output channels' }
+      ],
+    }],
+  },
+  {
+    name: 'pw',
+    detail: 'Controls the pulsewidth of the pulse oscillator)',
+    documentation: 'Controls the pulsewidth of the pulse oscillator).',
+    signatures: [{
+      label: 'pw(pulsewidth)',
+      parameters: [
+        { label: 'pulsewidth', documentation: '* @example' }
+      ],
+    }],
+  },
+  {
+    name: 'pwrate',
+    detail: 'Controls the lfo rate for the pulsewidth of the pulse oscill',
+    documentation: 'Controls the lfo rate for the pulsewidth of the pulse oscillator).',
+    signatures: [{
+      label: 'pwrate(rate)',
+      parameters: [
+        { label: 'rate', documentation: '* @example' }
+      ],
+    }],
+  },
+  {
+    name: 'pwsweep',
+    detail: 'Controls the lfo sweep for the pulsewidth of the pulse oscil',
+    documentation: 'Controls the lfo sweep for the pulsewidth of the pulse oscillator).',
+    signatures: [{
+      label: 'pwsweep(sweep)',
+      parameters: [
+        { label: 'sweep', documentation: '* @example' }
+      ],
+    }],
+  },
+  {
+    name: 'phasersweep',
+    detail: 'The frequency sweep range of the lfo for the phaser effect',
+    documentation: 'The frequency sweep range of the lfo for the phaser effect. Defaults to 2000). .',
+    signatures: [{
+      label: 'phasersweep(phasersweep)',
+      parameters: [
+        { label: 'phasersweep', documentation: 'most useful values are between 0 and 4000' }
+      ],
+    }],
+  },
+  {
+    name: 'phasercenter',
+    detail: 'The center frequency of the phaser in HZ',
+    documentation: 'The center frequency of the phaser in HZ. Defaults to 1000). .',
+    signatures: [{
+      label: 'phasercenter(centerfrequency)',
+      parameters: [
+        { label: 'centerfrequency', documentation: 'in HZ' }
+      ],
+    }],
+  },
+  {
+    name: 'phaserdepth',
+    detail: 'The amount the signal is affected by the phaser effect',
+    documentation: 'The amount the signal is affected by the phaser effect. Defaults to 0.75). . / // also a superdirt control export const { phaserdepth, phd, phasdp } =; /** Choose the channel the pattern is sent to in superdirt',
+    signatures: [{
+      label: 'phaserdepth(depth, channel)',
+      parameters: [
+        { label: 'depth', documentation: 'number between 0 and 1' },
+        { label: 'channel', documentation: 'channel number' }
+      ],
+    }],
+  },
+  {
+    name: 'lpenv',
+    detail: 'Sets the lowpass filter envelope modulation depth',
+    documentation: 'Sets the lowpass filter envelope modulation depth. . . . .',
+    signatures: [{
+      label: 'lpenv(modulation)',
+      parameters: [
+        { label: 'modulation', documentation: 'depth of the lowpass filter envelope between 0 and _n_' }
+      ],
+    }],
+  },
+  {
+    name: 'hpenv',
+    detail: 'Sets the highpass filter envelope modulation depth',
+    documentation: 'Sets the highpass filter envelope modulation depth. . . . .',
+    signatures: [{
+      label: 'hpenv(modulation)',
+      parameters: [
+        { label: 'modulation', documentation: 'depth of the highpass filter envelope between 0 and _n_' }
+      ],
+    }],
+  },
+  {
+    name: 'bpenv',
+    detail: 'Sets the bandpass filter envelope modulation depth',
+    documentation: 'Sets the bandpass filter envelope modulation depth. . . . .',
+    signatures: [{
+      label: 'bpenv(modulation)',
+      parameters: [
+        { label: 'modulation', documentation: 'depth of the bandpass filter envelope between 0 and _n_' }
+      ],
+    }],
+  },
+  {
+    name: 'lpattack',
+    detail: 'Sets the attack duration for the lowpass filter envelope',
+    documentation: 'Sets the attack duration for the lowpass filter envelope. . . . .',
+    signatures: [{
+      label: 'lpattack(attack)',
+      parameters: [
+        { label: 'attack', documentation: 'time of the filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'hpattack',
+    detail: 'Sets the attack duration for the highpass filter envelope',
+    documentation: 'Sets the attack duration for the highpass filter envelope. . . . .',
+    signatures: [{
+      label: 'hpattack(attack)',
+      parameters: [
+        { label: 'attack', documentation: 'time of the highpass filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'bpattack',
+    detail: 'Sets the attack duration for the bandpass filter envelope',
+    documentation: 'Sets the attack duration for the bandpass filter envelope. . . . .',
+    signatures: [{
+      label: 'bpattack(attack)',
+      parameters: [
+        { label: 'attack', documentation: 'time of the bandpass filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'lpdecay',
+    detail: 'Sets the decay duration for the lowpass filter envelope',
+    documentation: 'Sets the decay duration for the lowpass filter envelope. . . . .',
+    signatures: [{
+      label: 'lpdecay(decay)',
+      parameters: [
+        { label: 'decay', documentation: 'time of the filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'hpdecay',
+    detail: 'Sets the decay duration for the highpass filter envelope',
+    documentation: 'Sets the decay duration for the highpass filter envelope. . . . . .',
+    signatures: [{
+      label: 'hpdecay(decay)',
+      parameters: [
+        { label: 'decay', documentation: 'time of the highpass filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'bpdecay',
+    detail: 'Sets the decay duration for the bandpass filter envelope',
+    documentation: 'Sets the decay duration for the bandpass filter envelope. . . . . .',
+    signatures: [{
+      label: 'bpdecay(decay)',
+      parameters: [
+        { label: 'decay', documentation: 'time of the bandpass filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'lpsustain',
+    detail: 'Sets the sustain amplitude for the lowpass filter envelope',
+    documentation: 'Sets the sustain amplitude for the lowpass filter envelope. . . . . .',
+    signatures: [{
+      label: 'lpsustain(sustain)',
+      parameters: [
+        { label: 'sustain', documentation: 'amplitude of the lowpass filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'hpsustain',
+    detail: 'Sets the sustain amplitude for the highpass filter envelope',
+    documentation: 'Sets the sustain amplitude for the highpass filter envelope. . . . . .',
+    signatures: [{
+      label: 'hpsustain(sustain)',
+      parameters: [
+        { label: 'sustain', documentation: 'amplitude of the highpass filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'bpsustain',
+    detail: 'Sets the sustain amplitude for the bandpass filter envelope',
+    documentation: 'Sets the sustain amplitude for the bandpass filter envelope. . . . . .',
+    signatures: [{
+      label: 'bpsustain(sustain)',
+      parameters: [
+        { label: 'sustain', documentation: 'amplitude of the bandpass filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'lprelease',
+    detail: 'Sets the release time for the lowpass filter envelope',
+    documentation: 'Sets the release time for the lowpass filter envelope. . . . . . .',
+    signatures: [{
+      label: 'lprelease(release)',
+      parameters: [
+        { label: 'release', documentation: 'time of the filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'hprelease',
+    detail: 'Sets the release time for the highpass filter envelope',
+    documentation: 'Sets the release time for the highpass filter envelope. . . . . . .',
+    signatures: [{
+      label: 'hprelease(release)',
+      parameters: [
+        { label: 'release', documentation: 'time of the highpass filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'bprelease',
+    detail: 'Sets the release time for the bandpass filter envelope',
+    documentation: 'Sets the release time for the bandpass filter envelope. . . . . . .',
+    signatures: [{
+      label: 'bprelease(release)',
+      parameters: [
+        { label: 'release', documentation: 'time of the bandpass filter envelope' }
+      ],
+    }],
+  },
+  {
+    name: 'ftype',
+    detail: 'Sets the filter type',
+    documentation: 'Sets the filter type. The ladder filter is more aggressive. More types might be added in the future. . . . .',
+    signatures: [{
+      label: 'ftype(type)',
+      parameters: [
+        { label: 'type', documentation: '12db (0), ladder (1), or 24db (2)' }
+      ],
+    }],
+  },
+  {
+    name: 'fanchor',
+    detail: 'controls the center of the filter envelope',
+    documentation: 'controls the center of the filter envelope. 0 is unipolar positive, .5 is bipolar, 1 is unipolar negative .',
+    signatures: [{
+      label: 'fanchor(center)',
+      parameters: [
+        { label: 'center', documentation: '0 to 1' }
+      ],
+    }],
+  },
+  {
+    name: 'vibmod',
+    detail: 'Sets the vibrato depth in semitones',
+    documentation: 'Sets the vibrato depth in semitones. Only has an effect if `vibrato` | `vib` | `v` is is also set . ._ // change the vibrato frequency with ":" . ._',
+    signatures: [{
+      label: 'vibmod(depth)',
+      parameters: [
+        { label: 'depth', documentation: 'of vibrato (in semitones)' }
+      ],
+    }],
+  },
+  {
+    name: 'hpq',
+    detail: 'Controls the **h**igh-**p**ass **q**-value',
+    documentation: 'Controls the **h**igh-**p**ass **q**-value.',
+    signatures: [{
+      label: 'hpq(q)',
+      parameters: [
+        { label: 'q', documentation: 'resonance factor between 0 and 50' }
+      ],
+    }],
+  },
+  {
+    name: 'lpq',
+    detail: 'Controls the **l**ow-**p**ass **q**-value',
+    documentation: 'Controls the **l**ow-**p**ass **q**-value. / // currently an alias of \'resonance\' https://codeberg.org/uzu/strudel/issues/496 export const { resonance, lpq } =; /** DJ filter, below 0.5 is low pass filter, above is high pass filter.).',
+    signatures: [{
+      label: 'lpq(q, cutoff)',
+      parameters: [
+        { label: 'q', documentation: 'resonance factor between 0 and 50' },
+        { label: 'cutoff', documentation: 'below 0.5 is low pass filter, above is high pass filter' }
+      ],
+    }],
+  },
+  {
+    name: 'delayspeed',
+    detail: 'Sets the time of the delay effect',
+    documentation: 'Sets the time of the delay effect.).',
+    signatures: [{
+      label: 'delayspeed(delayspeed)',
+      parameters: [
+        { label: 'delayspeed', documentation: 'controls the pitch of the delay feedback' }
+      ],
+    }],
+  },
+  {
+    name: 'delaysync',
+    detail: 'Sets the time of the delay effect in cycles',
+    documentation: 'Sets the time of the delay effect in cycles.)',
+    signatures: [{
+      label: 'delaysync(cycles)',
+      parameters: [
+        { label: 'cycles', documentation: 'delay length in cycles' }
+      ],
+    }],
+  },
+  {
+    name: 'lock',
+    detail: 'Specifies whether delaytime is calculated relative to cps',
+    documentation: 'Specifies whether delaytime is calculated relative to cps.',
+    signatures: [{
+      label: 'lock(enable)',
+      parameters: [
+        { label: 'enable', documentation: 'When set to 1, delaytime is a direct multiple of a cycle.' }
+      ],
+    }],
+  },
+  {
+    name: 'spread',
+    detail: 'Set the stereo pan spread for supported oscillators',
+    documentation: 'Set the stereo pan spread for supported oscillators',
+    signatures: [{
+      label: 'spread(spread)',
+      parameters: [
+        { label: 'spread', documentation: 'between 0 and 1' }
+      ],
+    }],
+  },
+  {
+    name: 'dry',
+    detail: 'Set dryness of reverb',
+    documentation: 'Set dryness of reverb. See `room` and `size` for more information about reverb.").',
+    signatures: [{
+      label: 'dry(dry)',
+      parameters: [
+        { label: 'dry', documentation: '0 = wet, 1 = dry' }
+      ],
+    }],
+  },
+  {
+    name: 'pattack',
+    detail: 'Attack time of pitch envelope',
+    documentation: 'Attack time of pitch envelope.',
+    signatures: [{
+      label: 'pattack(time)',
+      parameters: [
+        { label: 'time', documentation: 'time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'pdecay',
+    detail: 'Decay time of pitch envelope',
+    documentation: 'Decay time of pitch envelope.',
+    signatures: [{
+      label: 'pdecay(time)',
+      parameters: [
+        { label: 'time', documentation: 'time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'prelease',
+    detail: 'Release time of pitch envelope ',
+    documentation: 'Release time of pitch envelope . // to hear the pitch release .',
+    signatures: [{
+      label: 'prelease(time)',
+      parameters: [
+        { label: 'time', documentation: 'time in seconds' }
+      ],
+    }],
+  },
+  {
+    name: 'penv',
+    detail: 'Amount of pitch envelope',
+    documentation: 'Amount of pitch envelope. Negative values will flip the envelope. If you don\'t set other pitch envelope controls, `pattack:.2` will be the default. .',
+    signatures: [{
+      label: 'penv(semitones)',
+      parameters: [
+        { label: 'semitones', documentation: 'change in semitones' }
+      ],
+    }],
+  },
+  {
+    name: 'pcurve',
+    detail: 'Curve of envelope',
+    documentation: 'Curve of envelope. Defaults to linear. exponential is good for kicks . . .',
+    signatures: [{
+      label: 'pcurve(type)',
+      parameters: [
+        { label: 'type', documentation: '0 = linear, 1 = exponential' }
+      ],
+    }],
+  },
+  {
+    name: 'panchor',
+    detail: 'Sets the range anchor of the envelope: - anchor 0: range = [',
+    documentation: 'Sets the range anchor of the envelope: - anchor 0: range = [note, note + penv] - anchor 1: range = [note - penv, note] If you don\'t set an anchor, the value will default to the psustain value.',
+    signatures: [{
+      label: 'panchor(anchor)',
+      parameters: [
+        { label: 'anchor', documentation: 'anchor offset' }
+      ],
+    }],
+  },
+  {
+    name: 'lrate',
+    detail: 'Rate of modulation / rotation for leslie effect / // TODO: t',
+    documentation: 'Rate of modulation / rotation for leslie effect / // TODO: the rate seems to "lag" (in the example, 1 will be fast) export const { lrate } =; /** Physical size of the cabinet in meters. Be careful, it might be slightly larger than your computer. Affects the Doppler amount (pitch warble)',
+    signatures: [{
+      label: 'lrate(rate, meters)',
+      parameters: [
+        { label: 'rate', documentation: '6.7 for fast, 0.7 for slow' },
+        { label: 'meters', documentation: 'somewhere between 0 and 1' }
+      ],
+    }],
+  },
+  {
+    name: 'label',
+    detail: 'Sets the displayed text for an event on the pianoroll',
+    documentation: 'Sets the displayed text for an event on the pianoroll',
+    signatures: [{
+      label: 'label(label)',
+      parameters: [
+        { label: 'label', documentation: 'text to display' }
+      ],
+    }],
+  },
+  {
+    name: 'roomlp',
+    detail: 'Reverb lowpass starting frequency (in hertz)',
+    documentation: 'Reverb lowpass starting frequency (in hertz). When this property is changed, the reverb will be recaculated, so only change this sparsely..',
+    signatures: [{
+      label: 'roomlp(frequency)',
+      parameters: [
+        { label: 'frequency', documentation: 'between 0 and 20000hz' }
+      ],
+    }],
+  },
+  {
+    name: 'roomdim',
+    detail: 'Reverb lowpass frequency at -60dB (in hertz)',
+    documentation: 'Reverb lowpass frequency at -60dB (in hertz). When this property is changed, the reverb will be recaculated, so only change this sparsely..',
+    signatures: [{
+      label: 'roomdim(frequency)',
+      parameters: [
+        { label: 'frequency', documentation: 'between 0 and 20000hz' }
+      ],
+    }],
+  },
+  {
+    name: 'roomfade',
+    detail: 'Reverb fade time (in seconds)',
+    documentation: 'Reverb fade time (in seconds). When this property is changed, the reverb will be recaculated, so only change this sparsely..',
+    signatures: [{
+      label: 'roomfade(seconds)',
+      parameters: [
+        { label: 'seconds', documentation: 'for the reverb to fade' }
+      ],
+    }],
+  },
+  {
+    name: 'iresponse',
+    detail: 'Sets the sample to use as an impulse response for the reverb',
+    documentation: 'Sets the sample to use as an impulse response for the reverb.',
+    signatures: [{
+      label: 'iresponse(sample)',
+      parameters: [
+        { label: 'sample', documentation: 'to use as an impulse response' }
+      ],
+    }],
+  },
+  {
+    name: 'irspeed',
+    detail: 'Sets speed of the sample for the impulse response',
+    documentation: 'Sets speed of the sample for the impulse response. $:).',
+    signatures: [{
+      label: 'irspeed(speed)',
+      parameters: [
+        { label: 'speed', documentation: '* @example' }
+      ],
+    }],
+  },
+  {
+    name: 'irbegin',
+    detail: 'Sets the beginning of the IR response sample $:)',
+    documentation: 'Sets the beginning of the IR response sample $:).',
+    signatures: [{
+      label: 'irbegin(begin)',
+      parameters: [
+        { label: 'begin', documentation: 'between 0 and 1' }
+      ],
+    }],
+  },
+  {
+    name: 'roomsize',
+    detail: 'Sets the room size of the reverb, see `room`',
+    documentation: 'Sets the room size of the reverb, see `room`. When this property is changed, the reverb will be recaculated, so only change this sparsely.. / // TODO: find out why : // // .. does not work. Is it because room is only one effect? export const { roomsize, size, sz, rsize } =; // [\'sagogo\'], // [\'sclap\'], // [\'sclaves\'], // [\'scrash\'], /** (Deprecated) Wave shaping distortion. WARNING: can suddenly get unpredictably loud. Please use distort instead, which has a more predictable response curve second option in optional array syntax (ex: ".9:.5") applies a postgain to the output',
+    signatures: [{
+      label: 'roomsize(size, distortion)',
+      parameters: [
+        { label: 'size', documentation: 'between 0 and 10' },
+        { label: 'distortion', documentation: 'between 0 and 1' }
+      ],
+    }],
+  },
+  {
+    name: 'distortvol',
+    detail: 'Postgain for waveshaping distortion',
+    documentation: 'Postgain for waveshaping distortion.',
+    signatures: [{
+      label: 'distortvol(volume)',
+      parameters: [
+        { label: 'volume', documentation: 'linear postgain of the distortion' }
+      ],
+    }],
+  },
+  {
+    name: 'distorttype',
+    detail: 'Type of waveshaping distortion to apply',
+    documentation: 'Type of waveshaping distortion to apply. . .) .',
+    signatures: [{
+      label: 'distorttype(type)',
+      parameters: [
+        { label: 'type', documentation: 'type of distortion to apply' }
+      ],
+    }],
+  },
+  {
+    name: 'compressor',
+    detail: 'Dynamics Compressor',
+    documentation: 'Dynamics Compressor. The params are `` More info [here](https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode?retiredLocale=de#instance_properties) .',
+    signatures: [{
+      label: 'compressor()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'stretch',
+    detail: 'Changes the speed of sample playback, i',
+    documentation: 'Changes the speed of sample playback, i.e. a cheap way of changing pitch.',
+    signatures: [{
+      label: 'stretch(factor)',
+      parameters: [
+        { label: 'factor', documentation: '-inf to inf, negative numbers play the sample backwards.' }
+      ],
+    }],
+  },
+  {
+    name: 'density',
+    detail: 'Noise crackle density)',
+    documentation: 'Noise crackle density)',
+    signatures: [{
+      label: 'density(density)',
+      parameters: [
+        { label: 'density', documentation: 'between 0 and x' }
+      ],
+    }],
+  },
+  {
+    name: 'duration',
+    detail: 'Sets the duration of the event in cycles',
+    documentation: 'Sets the duration of the event in cycles. Similar to clip / legato, it also cuts samples off at the end if they exceed the duration.',
+    signatures: [{
+      label: 'duration(seconds)',
+      parameters: [
+        { label: 'seconds', documentation: '>= 0' }
+      ],
+    }],
+  },
+  {
+    name: 'midicmd',
+    detail: 'MIDI command: Sends a MIDI command message',
+    documentation: 'MIDI command: Sends a MIDI command message.',
+    signatures: [{
+      label: 'midicmd(command)',
+      parameters: [
+        { label: 'command', documentation: 'MIDI command' }
+      ],
+    }],
+  },
+  {
+    name: 'control',
+    detail: 'MIDI control: Sends a MIDI control change message',
+    documentation: 'MIDI control: Sends a MIDI control change message.',
+    signatures: [{
+      label: 'control(MIDI, MIDI)',
+      parameters: [
+        { label: 'MIDI', documentation: 'control number (0-127)' },
+        { label: 'MIDI', documentation: 'controller value (0-127)' }
+      ],
+    }],
+  },
+  {
+    name: 'nrpnn',
+    detail: 'MIDI NRPN non-registered parameter number: Sends a MIDI NRPN',
+    documentation: 'MIDI NRPN non-registered parameter number: Sends a MIDI NRPN non-registered parameter number message.',
+    signatures: [{
+      label: 'nrpnn(nrpnn)',
+      parameters: [
+        { label: 'nrpnn', documentation: 'MIDI NRPN non-registered parameter number (0-127)' }
+      ],
+    }],
+  },
+  {
+    name: 'nrpv',
+    detail: 'MIDI NRPN non-registered parameter value: Sends a MIDI NRPN ',
+    documentation: 'MIDI NRPN non-registered parameter value: Sends a MIDI NRPN non-registered parameter value message.',
+    signatures: [{
+      label: 'nrpv(nrpv)',
+      parameters: [
+        { label: 'nrpv', documentation: 'MIDI NRPN non-registered parameter value (0-127)' }
+      ],
+    }],
+  },
+  {
+    name: 'progNum',
+    detail: 'MIDI program number: Sends a MIDI program change message',
+    documentation: 'MIDI program number: Sends a MIDI program change message.',
+    signatures: [{
+      label: 'progNum(program)',
+      parameters: [
+        { label: 'program', documentation: 'MIDI program number (0-127)' }
+      ],
+    }],
+  },
+  {
+    name: 'sysex',
+    detail: 'MIDI sysex: Sends a MIDI sysex message',
+    documentation: 'MIDI sysex: Sends a MIDI sysex message.',
+    signatures: [{
+      label: 'sysex(id, data)',
+      parameters: [
+        { label: 'id', documentation: 'Sysex ID' },
+        { label: 'data', documentation: 'Sysex data' }
+      ],
+    }],
+  },
+  {
+    name: 'sysexid',
+    detail: 'MIDI sysex ID: Sends a MIDI sysex identifier message',
+    documentation: 'MIDI sysex ID: Sends a MIDI sysex identifier message.',
+    signatures: [{
+      label: 'sysexid(id)',
+      parameters: [
+        { label: 'id', documentation: 'Sysex ID' }
+      ],
+    }],
+  },
+  {
+    name: 'sysexdata',
+    detail: 'MIDI sysex data: Sends a MIDI sysex message',
+    documentation: 'MIDI sysex data: Sends a MIDI sysex message.',
+    signatures: [{
+      label: 'sysexdata(data)',
+      parameters: [
+        { label: 'data', documentation: 'Sysex data' }
+      ],
+    }],
+  },
+  {
+    name: 'midibend',
+    detail: 'MIDI pitch bend: Sends a MIDI pitch bend message',
+    documentation: 'MIDI pitch bend: Sends a MIDI pitch bend message.).',
+    signatures: [{
+      label: 'midibend(midibend)',
+      parameters: [
+        { label: 'midibend', documentation: 'MIDI pitch bend (-1 - 1)' }
+      ],
+    }],
+  },
+  {
+    name: 'miditouch',
+    detail: 'MIDI key after touch: Sends a MIDI key after touch message',
+    documentation: 'MIDI key after touch: Sends a MIDI key after touch message.).',
+    signatures: [{
+      label: 'miditouch(miditouch)',
+      parameters: [
+        { label: 'miditouch', documentation: 'MIDI key after touch (0-1)' }
+      ],
+    }],
+  },
+  {
+    name: 'oschost',
+    detail: 'The host to send open sound control messages to',
+    documentation: 'The host to send open sound control messages to. Requires running the OSC bridge.;',
+    signatures: [{
+      label: 'oschost(oschost)',
+      parameters: [
+        { label: 'oschost', documentation: 'e.g. \'localhost\'' }
+      ],
+    }],
+  },
+  {
+    name: 'oscport',
+    detail: 'The port to send open sound control messages to',
+    documentation: 'The port to send open sound control messages to. Requires running the OSC bridge.;',
+    signatures: [{
+      label: 'oscport(oscport)',
+      parameters: [
+        { label: 'oscport', documentation: 'e.g. 57120' }
+      ],
+    }],
+  },
+  {
+    name: 'as',
+    detail: 'Sets properties in a batch',
+    documentation: 'Sets properties in a batch. "c:.5 a:1 f:.25 e:.8". "{0@2 0.25 0 0.5 .3 .5}%8".',
+    signatures: [{
+      label: 'as(mapping)',
+      parameters: [
+        { label: 'mapping', documentation: 'the control names that are set' }
+      ],
+    }],
+  },
+  {
+    name: 'scrub',
+    detail: 'Allows you to scrub an audio file like a tape loop by passin',
+    documentation: 'Allows you to scrub an audio file like a tape loop by passing values that represents the position in the audio file in the optional array syntax ex: "0.5:2", the second value controls the speed of playback;)',
+    signatures: [{
+      label: 'scrub()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'euclidish',
+    detail: 'A \'euclid\' variant with an additional parameter that morphs ',
+    documentation: 'A \'euclid\' variant with an additional parameter that morphs the resulting rhythm from 0 (no morphing) to 1 (completely \'even\'). For example `` would be the same as ``, and `` would be the same as ``. `` would have a groove somewhere between. Inspired by the work of Malcom Braff.) .)',
+    signatures: [{
+      label: 'euclidish(pulses, steps, groove)',
+      parameters: [
+        { label: 'pulses', documentation: 'the number of onsets' },
+        { label: 'steps', documentation: 'the number of steps to fill' },
+        { label: 'groove', documentation: 'exists between the extremes of 0 (straight euclidian) and 1 (straight pulse)' }
+      ],
+    }],
+  },
+  {
+    name: 'round',
+    detail: 'Assumes a numerical pattern',
+    documentation: 'Assumes a numerical pattern. Returns a new pattern with all values rounded to the nearest integer.).',
+    signatures: [{
+      label: 'round()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'floor',
+    detail: 'Assumes a numerical pattern',
+    documentation: 'Assumes a numerical pattern. Returns a new pattern with all values set to their mathematical floor. E.g. `3.7` replaced with to `3`, and `-4.2` replaced with `-5`.)',
+    signatures: [{
+      label: 'floor()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'ceil',
+    detail: 'Assumes a numerical pattern',
+    documentation: 'Assumes a numerical pattern. Returns a new pattern with all values set to their mathematical ceiling. E.g. `3.2` replaced with `4`, and `-4.2` replaced with `-4`.)',
+    signatures: [{
+      label: 'ceil()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'rangex',
+    detail: 'Assumes a numerical pattern, containing unipolar values in t',
+    documentation: 'Assumes a numerical pattern, containing unipolar values in the range 0 .. 1 Returns a new pattern with values scaled to the given min/max range, following an exponential curve. .)',
+    signatures: [{
+      label: 'rangex()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'range2',
+    detail: 'Assumes a numerical pattern, containing bipolar values in th',
+    documentation: 'Assumes a numerical pattern, containing bipolar values in the range -1 .. 1 Returns a new pattern with values scaled to the given min/max range. .)',
+    signatures: [{
+      label: 'range2()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'ratio',
+    detail: 'Allows dividing numbers via list notation using ":"',
+    documentation: 'Allows dividing numbers via list notation using ":". Returns a new pattern with just numbers. .',
+    signatures: [{
+      label: 'ratio()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'invert',
+    detail: 'Swaps 1s and 0s in a binary pattern',
+    documentation: 'Swaps 1s and 0s in a binary pattern.)',
+    signatures: [{
+      label: 'invert()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'echoWith',
+    detail: 'Superimpose and offset multiple times, applying the given fu',
+    documentation: 'Superimpose and offset multiple times, applying the given function each time. "<0 [2 4]>" . => p.) .',
+    signatures: [{
+      label: 'echoWith(times, time, func)',
+      parameters: [
+        { label: 'times', documentation: 'how many times to repeat' },
+        { label: 'time', documentation: 'cycle offset between iterations' },
+        { label: 'func', documentation: 'function to apply, given the pattern and the iteration index' }
+      ],
+    }],
+  },
+  {
+    name: 'plyWith',
+    detail: 'The plyWith function repeats each event the given number of ',
+    documentation: 'The plyWith function repeats each event the given number of times, applying the given function to each event.\n "<0 [2 4]>" . => p.) .',
+    signatures: [{
+      label: 'plyWith(factor, func)',
+      parameters: [
+        { label: 'factor', documentation: 'how many times to repeat' },
+        { label: 'func', documentation: 'function to apply, given the pattern' }
+      ],
+    }],
+  },
+  {
+    name: 'plyForEach',
+    detail: 'The plyForEach function repeats each event the given number ',
+    documentation: 'The plyForEach function repeats each event the given number of times, applying the given function to each event. This version of ply uses the iteration index as an argument to the function, similar to echoWith. "<0 [2 4]>" . => p.) .',
+    signatures: [{
+      label: 'plyForEach(factor, func)',
+      parameters: [
+        { label: 'factor', documentation: 'how many times to repeat' },
+        { label: 'func', documentation: 'function to apply, given the pattern and the iteration index' }
+      ],
+    }],
+  },
+  {
+    name: 'repeatCycles',
+    detail: 'Repeats each cycle the given number of times',
+    documentation: 'Repeats each cycle the given number of times.).',
+    signatures: [{
+      label: 'repeatCycles()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'fastChunk',
+    detail: 'Like `chunk`, but the cycles of the source pattern aren\'t re',
+    documentation: 'Like `chunk`, but the cycles of the source pattern aren\'t repeated for each set of chunks. "<0 8> 1 2 3 4 5 6 7" .). .',
+    signatures: [{
+      label: 'fastChunk()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'chunkInto',
+    detail: 'Like `chunk`, but the function is applied to a looped subcyc',
+    documentation: 'Like `chunk`, but the function is applied to a looped subcycle of the source pattern.) .',
+    signatures: [{
+      label: 'chunkInto()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'chunkBackInto',
+    detail: 'Like `chunkInto`, but moves backwards through the chunks',
+    documentation: 'Like `chunkInto`, but moves backwards through the chunks.) .',
+    signatures: [{
+      label: 'chunkBackInto()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'ribbon',
+    detail: 'Loops the pattern inside an `offset` for `cycles`',
+    documentation: 'Loops the pattern inside an `offset` for `cycles`. If you think of the entire span of time in cycles as a ribbon, you can cut a single piece and loop it. // Looping a portion of randomness). // rhythm generator',
+    signatures: [{
+      label: 'ribbon(offset, cycles)',
+      parameters: [
+        { label: 'offset', documentation: 'start point of loop in cycles' },
+        { label: 'cycles', documentation: 'loop length in cycles' }
+      ],
+    }],
+  },
+  {
+    name: 'tag',
+    detail: 'Tags each Hap with an identifier',
+    documentation: 'Tags each Hap with an identifier. Good for filtering. The function populates Hap.context.tags (Array). / Pattern.prototype.tag = function (tag) { return this. => ({ ...ctx, tags: (ctx.tags || []). })); }; /** Filters haps using the given function',
+    signatures: [{
+      label: 'tag(tag, test)',
+      parameters: [
+        { label: 'tag', documentation: 'anything unique' },
+        { label: 'test', documentation: 'function to test Hap' }
+      ],
+    }],
+  },
+  {
+    name: 'filterWhen',
+    detail: 'Filters haps by their begin time',
+    documentation: 'Filters haps by their begin time',
+    signatures: [{
+      label: 'filterWhen(test)',
+      parameters: [
+        { label: 'test', documentation: 'function to test Hap.whole.begin' }
+      ],
+    }],
+  },
+  {
+    name: 'stepcat',
+    detail: '\'Concatenates\' patterns like `fastcat`, but proportional to ',
+    documentation: '\'Concatenates\' patterns like `fastcat`, but proportional to a number of steps per cycle. The steps can either be inferred from the pattern, or provided as a [length, pattern] pair. Has the alias `timecat`. // the same as "e3@3 g3". // the same as "bd sd cp hh hh".',
+    signatures: [{
+      label: 'stepcat()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'onTriggerTime',
+    detail: 'make something happen on event time uses browser timeout whi',
+    documentation: 'make something happen on event time uses browser timeout which is innacurate for audio tasks => {console.}) / Pattern.prototype.onTriggerTime = function (func) { return this. => { const diff = targetTime - currentTime; window. => {; }, diff * 1000); }, false); }; /** Works the same as slice, but changes the playback speed of each slice to match the duration of its step. .',
+    signatures: [{
+      label: 'onTriggerTime()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'loopAtCps',
+    detail: 'Makes the sample fit the given number of cycles and cps valu',
+    documentation: 'Makes the sample fit the given number of cycles and cps value, by changing the speed. Please note that at some point cps will be given by a global clock and this function will be deprecated/removed. / // TODO - global cps clock export const { loopAtCps, loopatcps } = { return _; }); /** exposes a custom value at query time. basically allows mutating state without evaluation',
+    signatures: [{
+      label: 'loopAtCps()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'xfade',
+    detail: 'Cross-fades between left and right from 0 to 1: - 0 = (full ',
+    documentation: 'Cross-fades between left and right from 0 to 1: - 0 = (full left, no right) - .5 = (both equal) - 1 = (no left, full right), "<0 .25 .5 .75 1>",)',
+    signatures: [{
+      label: 'xfade()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'beat',
+    detail: 'creates a structure pattern from divisions of a cycle especi',
+    documentation: 'creates a structure pattern from divisions of a cycle especially useful for creating rhythms / const __beat = (join) => (t, div, pat) => { t =; div =; const b = t.; const e = t.; return =>._)); }; export const { beat } = => x.), ); export const _morph = (from, to, by) => { by =; const dur =; const positions = (list) => { const result = []; for (const [pos, value] of list.) { if (value) { result., value]); } } return result; }; const arcs = => { const b = by.; const e = b.; return new; },,, ); function { const cycle = state.span.begin.; const cycleArc = state.span.; const result = []; for (const whole of arcs) { const part = whole.; if (part !== undefined) { result. => x.), part. => x.), true, ), ); } } return result; } return new; }; /** Takes two binary rhythms represented as lists of 1s and 0s, and a number between 0 and 1 that morphs between them. The two lists should contain the same number of true values. ) // slowly morph between the rhythms ) )',
+    signatures: [{
+      label: 'beat()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'inhabitmod',
+    detail: 'The same as `inhabit`, but if you pick a number greater than',
+    documentation: 'The same as `inhabit`, but if you pick a number greater than the size of the list, it wraps around, rather than sticking at the maximum value. For example, if you pick the fifth pattern of a list of three, you\'ll get the second one.',
+    signatures: [{
+      label: 'inhabitmod(pat)',
+      parameters: [
+        { label: 'pat', documentation: '* @param {*} xs' }
+      ],
+    }],
+  },
+  {
+    name: 'mousex',
+    detail: 'The mouse\'s x position value ranges from 0 to 1',
+    documentation: 'The mouse\'s x position value ranges from 0 to 1.). / /** The mouse\'s y position value ranges from 0 to 1.). / let _mouseY = 0, _mouseX = 0; if (typeof window !== \'undefined\') { //document.onmousemove = (e) => { document. => { _mouseY = e.clientY / document.body.clientHeight; _mouseX = e.clientX / document.body.clientWidth; }); } export const mousey = => _mouseY); export const mouseY = => _mouseY); export const mousex = => _mouseX); export const mouseX = => _mouseX); // random signals const xorwise = (x) => { const a = (x << 13) ^ x; const b = (a >> 17) ^ a; return (b << 5) ^ b; }; // stretch 300 cycles over the range of [0,2**29 == 536870912) then apply the xorshift algorithm const _frac = (x) => x - Math.; const timeToIntSeed = (x) => * 536870912)); const intSeedToRand = (x) => (x % 536870912) / 536870912; const timeToRand = (x) => Math.)); const timeToRandsPrime = (seed, n) => { const result = []; // eslint-disable-next-line for (let i = 0; i < n; ++i) { result.); seed =; } return result; }; const timeToRands = (t, n) =>, n); /** / /** A discrete pattern of numbers from 0 to n-1). //',
+    signatures: [{
+      label: 'mousex()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'brandBy',
+    detail: 'A continuous pattern of 0 or 1 (binary random), with a proba',
+    documentation: 'A continuous pattern of 0 or 1 (binary random), with a probability for the value being 1)',
+    signatures: [{
+      label: 'brandBy(probability)',
+      parameters: [
+        { label: 'probability', documentation: '- a number between 0 and 1' }
+      ],
+    }],
+  },
+  {
+    name: 'berlin',
+    detail: 'Generates a continuous pattern of [berlin noise](conceived b',
+    documentation: 'Generates a continuous pattern of [berlin noise](conceived by Jame Coyne and Jade Rowland as a joke but turned out to be surprisingly cool and useful, like perlin noise but with sawtooth waves), in the range 0..1. // ascending arpeggios)).',
+    signatures: [{
+      label: 'berlin()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'undegrade',
+    detail: 'Inverse of `degrade`: Randomly removes 50% of events from th',
+    documentation: 'Inverse of `degrade`: Randomly removes 50% of events from the pattern. Shorthand for `.` Events that would be removed by degrade are let through by undegrade and vice versa (see second example)., x => x. )',
+    signatures: [{
+      label: 'undegrade()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'whenKey',
+    detail: 'Do something on a keypress, or array of keypresses [Key name',
+    documentation: 'Do something on a keypress, or array of keypresses [Key name reference](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values)").).)',
+    signatures: [{
+      label: 'whenKey()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'keyDown',
+    detail: 'returns true when a key or array of keys is held [Key name r',
+    documentation: 'returns true when a key or array of keys is held [Key name reference](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values)"),")])',
+    signatures: [{
+      label: 'keyDown()',
+      parameters: [
+
+      ],
+    }],
+  },
+  {
+    name: 'addVoicings',
+    detail: 'Adds a new custom voicing dictionary',
+    documentation: 'Adds a new custom voicing dictionary. "<C^7 A7 Dm7 G7>".',
+    signatures: [{
+      label: 'addVoicings(name, dictionary, range)',
+      parameters: [
+        { label: 'name', documentation: 'identifier for the voicing dictionary' },
+        { label: 'dictionary', documentation: 'maps chord symbol to possible voicings' },
+        { label: 'range', documentation: 'min, max note' }
+      ],
+    }],
+  },
+
 ];
 
 // Common typos and their corrections
