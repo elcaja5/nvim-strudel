@@ -88,8 +88,10 @@ const SCALE_NAMES = [
 
 // Voicing mode names (used with .mode() function)
 // Format: "mode" or "mode:anchor" e.g., "above:c3"
+// Single letters (u, v, w, x, y, z) are shorthand voicing modes used in chord notation like "Am:u:6"
 const VOICING_MODES = [
   'above', 'below', 'between', 'duck', 'root', 'rootless',
+  'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
 // Effects/modifiers in mini-notation
@@ -1959,6 +1961,109 @@ const STRUDEL_FUNCTIONS: FunctionSignature[] = [
     signatures: [{
       label: 'granular(options)',
       parameters: [{ label: 'options', documentation: 'Granular synthesis options' }],
+    }],
+  },
+  // Core Pattern methods (functional programming primitives)
+  {
+    name: 'fmap',
+    detail: 'Map function over pattern values',
+    documentation: 'Apply a function to each value in the pattern. This is the core mapping operation for transforming pattern values.',
+    signatures: [{
+      label: 'fmap(function)',
+      parameters: [{ label: 'function', documentation: 'Function to apply to each value: (value) => newValue' }],
+    }],
+  },
+  {
+    name: 'withValue',
+    detail: 'Transform pattern values',
+    documentation: 'Apply a function to transform each value in the pattern (alias for fmap)',
+    signatures: [{
+      label: 'withValue(function)',
+      parameters: [{ label: 'function', documentation: 'Function to apply to each value' }],
+    }],
+  },
+  {
+    name: 'withHap',
+    detail: 'Transform pattern events',
+    documentation: 'Apply a function to each hap (event) in the pattern, giving access to timing information',
+    signatures: [{
+      label: 'withHap(function)',
+      parameters: [{ label: 'function', documentation: 'Function to apply to each hap: (hap) => newHap' }],
+    }],
+  },
+  {
+    name: 'withHaps',
+    detail: 'Transform all pattern events',
+    documentation: 'Apply a function to all haps (events) in a query result',
+    signatures: [{
+      label: 'withHaps(function)',
+      parameters: [{ label: 'function', documentation: 'Function to apply to haps array: (haps) => newHaps' }],
+    }],
+  },
+  {
+    name: 'filterValues',
+    detail: 'Filter pattern values',
+    documentation: 'Keep only values that pass a predicate function',
+    signatures: [{
+      label: 'filterValues(predicate)',
+      parameters: [{ label: 'predicate', documentation: 'Function returning true/false: (value) => boolean' }],
+    }],
+  },
+  {
+    name: 'filterHaps',
+    detail: 'Filter pattern events',
+    documentation: 'Keep only haps (events) that pass a predicate function',
+    signatures: [{
+      label: 'filterHaps(predicate)',
+      parameters: [{ label: 'predicate', documentation: 'Function returning true/false: (hap) => boolean' }],
+    }],
+  },
+  {
+    name: 'register',
+    detail: 'Register custom pattern method',
+    documentation: 'Register a new method that can be called on patterns. Use this to create reusable pattern transformations.',
+    signatures: [{
+      label: 'register(name, function)',
+      parameters: [
+        { label: 'name', documentation: 'Name of the new method' },
+        { label: 'function', documentation: 'Function implementing the method: (arg, pattern) => newPattern' },
+      ],
+    }],
+  },
+  {
+    name: 'onTrigger',
+    detail: 'Trigger callback',
+    documentation: 'Call a function when each event triggers (for side effects)',
+    signatures: [{
+      label: 'onTrigger(callback)',
+      parameters: [{ label: 'callback', documentation: 'Function to call: (hap, currentTime, duration) => void' }],
+    }],
+  },
+  {
+    name: 'query',
+    detail: 'Query pattern',
+    documentation: 'Get events from a pattern for a given time span',
+    signatures: [{
+      label: 'query(state)',
+      parameters: [{ label: 'state', documentation: 'Query state with span {begin, end}' }],
+    }],
+  },
+  {
+    name: 'firstCycle',
+    detail: 'Get first cycle',
+    documentation: 'Get all events in the first cycle of a pattern (useful for debugging)',
+    signatures: [{
+      label: 'firstCycle()',
+      parameters: [],
+    }],
+  },
+  {
+    name: 'showFirstCycle',
+    detail: 'Show first cycle',
+    documentation: 'Print all events in the first cycle (for debugging)',
+    signatures: [{
+      label: 'showFirstCycle()',
+      parameters: [],
     }],
   },
   // === AUTO-GENERATED FROM STRUDEL JSDOC ===
@@ -7725,13 +7830,32 @@ async function validateDocument(document: TextDocument): Promise<void> {
   const samples = getAllSamples();
   const functionNames = STRUDEL_FUNCTIONS.map(f => f.name);
   
+  // Find user-defined functions created with register()
+  // Pattern: register('name', ...) or register("name", ...)
+  const userDefinedFunctions: string[] = [];
+  const registerRegex = /\bregister\s*\(\s*(['"])(\w+)\1/g;
+  let registerMatch;
+  while ((registerMatch = registerRegex.exec(text)) !== null) {
+    userDefinedFunctions.push(registerMatch[2]);
+  }
+  
+  // Also look for const assignments that look like custom functions
+  // Pattern: const funcName = register(...)
+  const constRegisterRegex = /\bconst\s+(\w+)\s*=\s*register\s*\(/g;
+  while ((registerMatch = constRegisterRegex.exec(text)) !== null) {
+    userDefinedFunctions.push(registerMatch[1]);
+  }
+  
+  // Combine built-in functions with user-defined ones for validation
+  const allFunctionNames = [...functionNames, ...userDefinedFunctions];
+  
   // Find all quoted strings and validate mini-notation
   const stringRegex = /(['"])((?:\\.|(?!\1)[^\\])*)\1/g;
   let match;
   
   // Functions whose string arguments should NOT be validated as mini-notation samples
-  // These take bank names, scale names, or other non-sample identifiers
-  const nonSampleArgFunctions = ['bank', 'scale', 'mode', 'voicing', 'chord', 'struct', 'mask'];
+  // These take bank names, scale names, function names, property names, or other non-sample identifiers
+  const nonSampleArgFunctions = ['bank', 'scale', 'mode', 'voicing', 'chord', 'struct', 'mask', 'register', 'pull'];
   
   while ((match = stringRegex.exec(text)) !== null) {
     const content = match[2];
@@ -7914,8 +8038,8 @@ async function validateDocument(document: TextDocument): Promise<void> {
     const funcName = match[1];
     const funcStart = match.index + 1; // After the dot
     
-    // Skip if known function
-    if (functionNames.includes(funcName)) continue;
+    // Skip if known function (built-in or user-defined)
+    if (allFunctionNames.includes(funcName)) continue;
     // Skip common method names
     if (['then', 'catch', 'map', 'filter', 'forEach', 'reduce', 'log', 'error', 'warn'].includes(funcName)) continue;
     
