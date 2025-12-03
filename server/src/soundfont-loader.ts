@@ -109,13 +109,47 @@ function base64ToWav(base64Data: string, outputPath: string): boolean {
 }
 
 /**
+ * Count unique samples in a font (for selecting best variant)
+ */
+async function countUniqueSamples(fontName: string): Promise<number> {
+  const zones = await downloadSoundfont(fontName);
+  const seen = new Set<number>();
+  
+  for (const zone of zones) {
+    if (!zone.file || zone.keyRangeHigh < zone.keyRangeLow) continue;
+    const midi = Math.round(zone.originalPitch / 100);
+    seen.add(midi);
+  }
+  
+  return seen.size;
+}
+
+/**
+ * Find the best font variant (the one with most unique samples)
+ */
+async function findBestFontVariant(fontNames: string[]): Promise<string | null> {
+  let bestFont = fontNames[0];
+  let bestCount = 0;
+  
+  for (const fontName of fontNames) {
+    const count = await countUniqueSamples(fontName);
+    if (count > bestCount) {
+      bestCount = count;
+      bestFont = fontName;
+    }
+  }
+  
+  return bestCount > 0 ? bestFont : null;
+}
+
+/**
  * Load a single soundfont instrument for SuperDirt
  * @param instrumentName The GM instrument name (e.g., "gm_piano")
- * @param fontName The specific font variant to use (e.g., "0000_JCLive_sf2_file")
+ * @param fontNames Array of font variants to try (will pick the one with most samples)
  */
 export async function loadSoundfontForSuperDirt(
   instrumentName: string,
-  fontName: string
+  fontNames: string | string[]
 ): Promise<boolean> {
   const bankDir = join(CACHE_DIR, instrumentName);
   
@@ -133,6 +167,16 @@ export async function loadSoundfontForSuperDirt(
     return false;
   }
   
+  // Convert single font name to array
+  const fontNameArray = Array.isArray(fontNames) ? fontNames : [fontNames];
+  
+  // Find the best variant (with most samples)
+  const fontName = await findBestFontVariant(fontNameArray);
+  if (!fontName) {
+    console.error(`[soundfont-loader] No valid font found for ${instrumentName}`);
+    return false;
+  }
+  
   console.log(`[soundfont-loader] Downloading ${instrumentName} (${fontName})...`);
   
   const zones = await downloadSoundfont(fontName);
@@ -145,20 +189,54 @@ export async function loadSoundfontForSuperDirt(
   
   let savedCount = 0;
   
+  // Track which originalPitch values we've already saved to avoid duplicates
+  const seenPitches = new Set<number>();
+  
+  // Also save zone metadata for proper playback
+  const zoneMetadata: Array<{
+    index: number;
+    midi: number;
+    keyRangeLow: number;
+    keyRangeHigh: number;
+  }> = [];
+  
   for (const zone of zones) {
     if (!zone.file) continue;
     
-    // Use the center pitch of the zone's range for the filename
-    const centerPitch = Math.floor((zone.keyRangeLow + zone.keyRangeHigh) / 2);
+    // Skip malformed zones where keyRangeHigh < keyRangeLow
+    if (zone.keyRangeHigh < zone.keyRangeLow) {
+      continue;
+    }
+    
+    // Use originalPitch (in cents) converted to MIDI note
+    // This is the actual pitch the sample was recorded at
+    const originalMidi = Math.round(zone.originalPitch / 100);
+    
+    // Skip duplicate pitches (some soundfonts have multiple zones at same pitch)
+    if (seenPitches.has(originalMidi)) {
+      continue;
+    }
+    seenPitches.add(originalMidi);
+    
     const paddedIndex = String(savedCount).padStart(3, '0');
-    const outputPath = join(bankDir, `${paddedIndex}_note${centerPitch}.wav`);
+    const outputPath = join(bankDir, `${paddedIndex}_note${originalMidi}.wav`);
     
     if (base64ToWav(zone.file, outputPath)) {
+      zoneMetadata.push({
+        index: savedCount,
+        midi: originalMidi,
+        keyRangeLow: zone.keyRangeLow,
+        keyRangeHigh: zone.keyRangeHigh,
+      });
       savedCount++;
     }
   }
   
   if (savedCount > 0) {
+    // Save zone metadata for proper zone selection during playback
+    const metadataPath = join(bankDir, '_zones.json');
+    writeFileSync(metadataPath, JSON.stringify(zoneMetadata, null, 2));
+    
     console.log(`[soundfont-loader] ${instrumentName}: saved ${savedCount} samples`);
     return true;
   }
@@ -185,10 +263,9 @@ export async function loadAllSoundfontsForSuperDirt(): Promise<number> {
     
     await Promise.all(
       batch.map(async ([name, fonts]) => {
-        // Use the first font variant (usually the best quality)
-        const fontName = fonts[0];
-        if (fontName) {
-          const success = await loadSoundfontForSuperDirt(name, fontName);
+        if (fonts && fonts.length > 0) {
+          // Pass all font variants - loadSoundfontForSuperDirt will pick the best one
+          const success = await loadSoundfontForSuperDirt(name, fonts);
           if (success) loadedCount++;
         }
       })

@@ -11,15 +11,140 @@ import { join } from 'path';
 import { homedir } from 'os';
 import { loadSoundfontForSuperDirt, isSoundfontCached } from './soundfont-loader.js';
 import { loadSamples, isBankCached, notifySuperDirtLoadSamples, getCacheDir } from './sample-manager.js';
+import { registerSoundfontMetadata } from './sample-metadata.js';
 
 // Import GM instrument definitions to know valid soundfont names
 import gm from '@strudel/soundfonts/gm.mjs';
 
 const CACHE_DIR = join(homedir(), '.local', 'share', 'strudel-samples');
+const baseCDN = 'https://strudel.b-cdn.net';
 
 // GM soundfont names (gm_piano, gm_violin, etc.)
 const gmInstruments = gm as unknown as Record<string, string[]>;
 const gmSoundfontNames = new Set(Object.keys(gmInstruments));
+
+// Tidal drum machine aliases: maps short alias (lowercase) -> full name
+// Built from tidal-drum-machines-alias.json (which maps full -> alias)
+// We invert it and normalize to lowercase for case-insensitive lookup
+let drumMachineAliases: Map<string, string> = new Map();
+let drumMachineSampleMap: Record<string, string[]> = {};
+let drumMachineBaseUrl = '';
+let drumMachinesLoaded = false;
+
+/**
+ * Load tidal drum machines metadata (aliases and sample map)
+ * This is called once on first use
+ */
+async function loadDrumMachineMetadata(): Promise<void> {
+  if (drumMachinesLoaded) return;
+  
+  try {
+    // Load the alias file
+    const aliasUrl = `${baseCDN}/tidal-drum-machines-alias.json`;
+    const aliasResp = await fetch(aliasUrl);
+    const aliases = await aliasResp.json() as Record<string, string>;
+    
+    // Invert: alias.json maps fullName -> shortName, we want shortName -> fullName
+    // Also add lowercase variants for case-insensitive lookup
+    for (const [fullName, shortName] of Object.entries(aliases)) {
+      drumMachineAliases.set(shortName.toLowerCase(), fullName);
+      drumMachineAliases.set(shortName, fullName); // Original case too
+    }
+    
+    // Load the sample map
+    const sampleUrl = `${baseCDN}/tidal-drum-machines.json`;
+    const sampleResp = await fetch(sampleUrl);
+    const sampleJson = await sampleResp.json() as Record<string, any>;
+    
+    drumMachineBaseUrl = sampleJson._base || `${baseCDN}/tidal-drum-machines/machines/`;
+    delete sampleJson._base;
+    drumMachineSampleMap = sampleJson;
+    
+    drumMachinesLoaded = true;
+    console.log(`[on-demand] Loaded drum machine metadata: ${drumMachineAliases.size} aliases, ${Object.keys(drumMachineSampleMap).length} banks`);
+  } catch (err) {
+    console.error('[on-demand] Failed to load drum machine metadata:', err);
+  }
+}
+
+/**
+ * Resolve a drum machine bank name (e.g., "tr909" -> "RolandTR909")
+ * Returns null if not a drum machine
+ */
+export async function resolveDrumMachineBank(bankAlias: string): Promise<string | null> {
+  await loadDrumMachineMetadata();
+  // Try lowercase first (case-insensitive), then original
+  return drumMachineAliases.get(bankAlias.toLowerCase()) || 
+         drumMachineAliases.get(bankAlias) || 
+         null;
+}
+
+/**
+ * Synchronous version of resolveDrumMachineBank
+ * Returns null if metadata hasn't been loaded yet
+ * Use this in performance-critical sync code paths (like OSC output)
+ */
+export function resolveDrumMachineBankSync(bankAlias: string): string | null {
+  if (!drumMachinesLoaded) return null;
+  return drumMachineAliases.get(bankAlias.toLowerCase()) || 
+         drumMachineAliases.get(bankAlias) || 
+         null;
+}
+
+/**
+ * Ensure drum machine metadata is loaded
+ * Call this during startup so resolveDrumMachineBankSync works
+ */
+export async function ensureDrumMachineMetadataLoaded(): Promise<void> {
+  await loadDrumMachineMetadata();
+}
+
+/**
+ * Get drum machine bank info for downloading
+ * @param fullBankName The full bank name like "RolandTR909_bd"
+ */
+export async function getDrumMachineBankInfo(fullBankName: string): Promise<{ source: Record<string, string[]>; baseUrl: string } | null> {
+  await loadDrumMachineMetadata();
+  
+  const samples = drumMachineSampleMap[fullBankName];
+  if (!samples) return null;
+  
+  return {
+    source: { [fullBankName]: samples },
+    baseUrl: drumMachineBaseUrl,
+  };
+}
+
+/**
+ * Check if a combined bank+sound name is a drum machine (e.g., "tr909bd", "TR909_sd")
+ */
+export async function isDrumMachineSound(combinedName: string): Promise<{ fullBankName: string; isValid: boolean } | null> {
+  await loadDrumMachineMetadata();
+  
+  // Try to find a matching alias prefix
+  // Common patterns: "tr909bd", "tr909_bd", "TR909bd", "TR909_bd"
+  for (const [alias, fullName] of drumMachineAliases.entries()) {
+    // Check if combinedName starts with this alias (case-insensitive)
+    const aliasLower = alias.toLowerCase();
+    const combinedLower = combinedName.toLowerCase();
+    
+    if (combinedLower.startsWith(aliasLower)) {
+      // Extract the sound part (bd, sd, hh, etc.)
+      let soundPart = combinedName.slice(alias.length);
+      // Remove leading underscore if present
+      if (soundPart.startsWith('_')) soundPart = soundPart.slice(1);
+      
+      if (soundPart) {
+        // Full bank name in the sample map is like "RolandTR909_bd"
+        const fullBankName = `${fullName}_${soundPart}`;
+        const isValid = fullBankName in drumMachineSampleMap;
+        return { fullBankName, isValid };
+      }
+    }
+  }
+  
+  return null;
+}
 
 // Common Strudel CDN sample banks that we know about
 const knownCdnBanks: Record<string, { source: string; baseUrl: string }> = {
@@ -46,6 +171,20 @@ const knownCdnBanks: Record<string, { source: string; baseUrl: string }> = {
 
 // Track what's currently being loaded to avoid duplicate requests
 const loadingPromises = new Map<string, Promise<boolean>>();
+
+/**
+ * Register soundfont metadata from cached files
+ * This enables proper note -> n + speed conversion for OSC output
+ */
+function registerSoundfontFromCache(name: string): void {
+  const bankDir = join(CACHE_DIR, name);
+  if (!existsSync(bankDir)) return;
+  
+  const files = readdirSync(bankDir).filter(f => f.endsWith('.wav'));
+  if (files.length > 0) {
+    registerSoundfontMetadata(name, files);
+  }
+}
 
 /**
  * Extract sample/sound names from pattern code
@@ -89,6 +228,57 @@ export function extractSoundNames(code: string): Set<string> {
 }
 
 /**
+ * Extract bank names and their associated sound names from pattern code
+ * Looks for patterns like:
+ *   .bank("tr909") - with preceding .s("bd")
+ *   bank("tr808").s("bd sd")
+ *   s("bd").bank("tr909")
+ */
+export function extractBankUsage(code: string): Array<{ bank: string; sounds: string[] }> {
+  const results: Array<{ bank: string; sounds: string[] }> = [];
+  
+  // Match bank("...") and try to find associated s() calls
+  const bankPattern = /\.?bank\s*\(\s*["'`]([^"'`]+)["'`]\s*\)/g;
+  
+  let match;
+  while ((match = bankPattern.exec(code)) !== null) {
+    const bankName = match[1];
+    const bankPos = match.index;
+    
+    // Look for s("...") or sound("...") nearby (within ~100 chars before or after)
+    const searchStart = Math.max(0, bankPos - 100);
+    const searchEnd = Math.min(code.length, bankPos + match[0].length + 100);
+    const searchArea = code.slice(searchStart, searchEnd);
+    
+    const soundPatterns = [
+      /\bs\s*\(\s*["'`]([^"'`]+)["'`]\s*\)/g,
+      /\.s\s*\(\s*["'`]([^"'`]+)["'`]\s*\)/g,
+    ];
+    
+    const sounds: string[] = [];
+    for (const sp of soundPatterns) {
+      let sm;
+      while ((sm = sp.exec(searchArea)) !== null) {
+        const content = sm[1];
+        const tokens = content.split(/[\s\[\]<>*\/,]+/);
+        for (const token of tokens) {
+          const name = token.split(':')[0].trim();
+          if (name && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) {
+            sounds.push(name);
+          }
+        }
+      }
+    }
+    
+    if (sounds.length > 0) {
+      results.push({ bank: bankName, sounds });
+    }
+  }
+  
+  return results;
+}
+
+/**
  * Check if a sound name is a GM soundfont
  */
 export function isGmSoundfont(name: string): boolean {
@@ -113,6 +303,31 @@ export function isSoundCached(name: string): boolean {
 }
 
 /**
+ * Load a drum machine bank for SuperDirt
+ * @param fullBankName The full bank name like "RolandTR909_bd"
+ */
+async function loadDrumMachineBank(fullBankName: string): Promise<boolean> {
+  const bankInfo = await getDrumMachineBankInfo(fullBankName);
+  if (!bankInfo) {
+    console.log(`[on-demand] Unknown drum machine bank: ${fullBankName}`);
+    return false;
+  }
+  
+  try {
+    const { bankNames } = await loadSamples(bankInfo.source, bankInfo.baseUrl);
+    if (bankNames.length > 0) {
+      console.log(`[on-demand] Loaded drum machine bank: ${fullBankName}`);
+      notifySuperDirtLoadSamples(getCacheDir());
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error(`[on-demand] Failed to load drum machine bank ${fullBankName}:`, err);
+    return false;
+  }
+}
+
+/**
  * Load a single sound on-demand
  * Returns true if loaded (or already cached), false if failed
  */
@@ -126,6 +341,10 @@ async function loadSound(name: string): Promise<boolean> {
   // Check if already cached
   if (isSoundCached(name)) {
     console.log(`[on-demand] ${name} already cached`);
+    // Still need to register metadata for soundfonts if not already registered
+    if (isGmSoundfont(name)) {
+      registerSoundfontFromCache(name);
+    }
     return true;
   }
   
@@ -136,10 +355,13 @@ async function loadSound(name: string): Promise<boolean> {
       if (isGmSoundfont(name)) {
         // Load GM soundfont
         const fonts = gmInstruments[name];
-        if (fonts && fonts[0]) {
-          const success = await loadSoundfontForSuperDirt(name, fonts[0]);
+        if (fonts && fonts.length > 0) {
+          // Pass all font variants - loadSoundfontForSuperDirt will pick the best one
+          const success = await loadSoundfontForSuperDirt(name, fonts);
           if (success) {
             console.log(`[on-demand] Loaded soundfont: ${name}`);
+            // Register metadata for note -> n + speed conversion
+            registerSoundfontFromCache(name);
             notifySuperDirtLoadSamples(getCacheDir());
             return true;
           }
@@ -156,6 +378,17 @@ async function loadSound(name: string): Promise<boolean> {
         }
         return false;
       } else {
+        // Check if it's a drum machine sound (e.g., "tr909bd")
+        const drumInfo = await isDrumMachineSound(name);
+        if (drumInfo?.isValid) {
+          // Check if already cached
+          if (isBankCached(drumInfo.fullBankName)) {
+            console.log(`[on-demand] Drum machine ${drumInfo.fullBankName} already cached`);
+            return true;
+          }
+          return await loadDrumMachineBank(drumInfo.fullBankName);
+        }
+        
         // Unknown sound - might be a built-in synth or already loaded by strudel-engine
         // We don't need to do anything for these
         console.log(`[on-demand] ${name} is not a known downloadable sound (might be synth or pre-loaded)`);
@@ -178,40 +411,73 @@ async function loadSound(name: string): Promise<boolean> {
  * Returns the names of sounds that were loaded
  */
 export async function loadSoundsForCode(code: string): Promise<string[]> {
+  const loaded: string[] = [];
+  
+  // Extract direct sound names (s("bd"), sound("piano"), etc.)
   const soundNames = extractSoundNames(code);
   
-  if (soundNames.size === 0) {
-    return [];
+  // Extract bank() usage (bank("tr909").s("bd"))
+  const bankUsage = extractBankUsage(code);
+  
+  console.log(`[on-demand] Detected sounds: ${Array.from(soundNames).join(', ') || '(none)'}`);
+  if (bankUsage.length > 0) {
+    console.log(`[on-demand] Detected banks: ${bankUsage.map(b => `${b.bank}(${b.sounds.join(',')})`).join(', ')}`);
   }
   
-  console.log(`[on-demand] Detected sounds in code: ${Array.from(soundNames).join(', ')}`);
+  // For cached soundfonts, ensure metadata is registered (needed for OSC note->n+speed)
+  for (const name of soundNames) {
+    if (isGmSoundfont(name) && isSoundCached(name)) {
+      registerSoundfontFromCache(name);
+    }
+  }
   
-  // Filter to only sounds we need to load (not cached)
-  const needsLoading = Array.from(soundNames).filter(name => {
-    // Only try to load GM soundfonts and known CDN banks
-    // Other sounds (synths, pre-loaded samples) don't need loading
+  // Load direct sound names (GM soundfonts and known CDN banks)
+  const directNeedsLoading = Array.from(soundNames).filter(name => {
     return (isGmSoundfont(name) || isKnownCdnBank(name)) && !isSoundCached(name);
   });
   
-  if (needsLoading.length === 0) {
-    console.log('[on-demand] All sounds already cached');
-    return [];
+  if (directNeedsLoading.length > 0) {
+    console.log(`[on-demand] Need to load direct sounds: ${directNeedsLoading.join(', ')}`);
+    const directResults = await Promise.all(
+      directNeedsLoading.map(async name => {
+        const success = await loadSound(name);
+        return success ? name : null;
+      })
+    );
+    loaded.push(...directResults.filter((n): n is string => n !== null));
   }
   
-  console.log(`[on-demand] Need to load: ${needsLoading.join(', ')}`);
-  
-  // Load all needed sounds in parallel
-  const results = await Promise.all(
-    needsLoading.map(async name => {
-      const success = await loadSound(name);
-      return success ? name : null;
-    })
-  );
-  
-  const loaded = results.filter((name): name is string => name !== null);
+  // Load drum machine banks from bank() usage
+  for (const { bank, sounds } of bankUsage) {
+    // Resolve the bank alias to full name (e.g., "tr909" -> "RolandTR909")
+    const fullBankPrefix = await resolveDrumMachineBank(bank);
+    if (!fullBankPrefix) {
+      console.log(`[on-demand] Unknown bank alias: ${bank}`);
+      continue;
+    }
+    
+    // Load each sound in the bank
+    for (const sound of sounds) {
+      const fullBankName = `${fullBankPrefix}_${sound}`;
+      
+      // Check if already cached
+      if (isBankCached(fullBankName)) {
+        console.log(`[on-demand] ${fullBankName} already cached`);
+        continue;
+      }
+      
+      // Load the drum machine bank
+      const success = await loadDrumMachineBank(fullBankName);
+      if (success) {
+        loaded.push(fullBankName);
+      }
+    }
+  }
   
   if (loaded.length > 0) {
     console.log(`[on-demand] Loaded ${loaded.length} sounds: ${loaded.join(', ')}`);
+  } else {
+    console.log('[on-demand] All sounds already cached or not loadable');
   }
   
   return loaded;

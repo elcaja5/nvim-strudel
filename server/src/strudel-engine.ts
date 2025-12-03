@@ -8,7 +8,8 @@ import type { ActiveElement, VisualizationEvent } from './types.js';
 import { initOsc, sendHapToSuperDirt, isOscConnected, closeOsc } from './osc-output.js';
 import { writeEngineState, clearEngineState } from './engine-state.js';
 import { loadSamples as loadSamplesForSuperDirt, initSampleManager, notifySuperDirtLoadSamples, setupOscPort } from './sample-manager.js';
-import { loadSoundsForCode } from './on-demand-loader.js';
+import { loadSoundsForCode, ensureDrumMachineMetadataLoaded } from './on-demand-loader.js';
+import { registerBankMetadata } from './sample-metadata.js';
 
 // NOTE: Web Audio API polyfill is initialized in index.ts before this module is imported.
 // This ensures AudioContext is available before superdough checks for it.
@@ -112,6 +113,7 @@ async function samples(
 
 /**
  * Track sample names from a sample source (for picker/completions)
+ * Also registers metadata for pitched sample banks (for OSC output)
  */
 async function trackSampleNames(
   source: string | Record<string, any>,
@@ -119,10 +121,12 @@ async function trackSampleNames(
   options?: { isBankCollection?: boolean }
 ): Promise<void> {
   if (typeof source === 'object') {
-    // Object source - get keys directly
-    for (const key of Object.keys(source)) {
+    // Object source - get keys directly and register metadata
+    for (const [key, value] of Object.entries(source)) {
       if (!key.startsWith('_')) {
         loadedSamples.add(key);
+        // Register metadata for this bank
+        registerBankMetadata(key, value);
       }
     }
   } else if (source.startsWith('github:')) {
@@ -134,10 +138,11 @@ async function trackSampleNames(
     const jsonUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/strudel.json`;
     try {
       const response = await fetch(jsonUrl);
-      const json = await response.json();
-      for (const key of Object.keys(json)) {
+      const json = await response.json() as Record<string, any>;
+      for (const [key, value] of Object.entries(json)) {
         if (!key.startsWith('_')) {
           loadedSamples.add(key);
+          registerBankMetadata(key, value);
         }
       }
     } catch (e) {
@@ -148,26 +153,28 @@ async function trackSampleNames(
     const shabdaUrl = `https://shabda.ndre.gr/${source.slice(7)}.json?strudel=1`;
     try {
       const response = await fetch(shabdaUrl);
-      const json = await response.json();
-      for (const key of Object.keys(json)) {
+      const json = await response.json() as Record<string, any>;
+      for (const [key, value] of Object.entries(json)) {
         if (!key.startsWith('_')) {
           loadedSamples.add(key);
+          registerBankMetadata(key, value);
         }
       }
     } catch (e) {
       console.warn(`[strudel-engine] Could not fetch from shabda: ${source}`);
     }
   } else if (source.includes('.json') || source.startsWith('http')) {
-    // JSON URL source - fetch to get sample names
+    // JSON URL source - fetch to get sample names and metadata
     try {
       const response = await fetch(source);
-      const json = await response.json();
-      for (const key of Object.keys(json)) {
+      const json = await response.json() as Record<string, any>;
+      for (const [key, value] of Object.entries(json)) {
         if (!key.startsWith('_')) {
           loadedSamples.add(key);
           if (options?.isBankCollection) {
             sampleBanks.add(key);
           }
+          registerBankMetadata(key, value);
         }
       }
     } catch (e) {
@@ -325,6 +332,9 @@ const sampleLoaders: Promise<void>[] = [
     } catch (e) {
       console.log('[strudel-engine] Loaded: tidal-drum-machines (aliases failed to load)');
     }
+    
+    // Also ensure drum machine metadata is loaded for OSC bank name resolution
+    await ensureDrumMachineMetadataLoaded();
   })(),
   
   // Mridangam samples
@@ -539,10 +549,6 @@ export class StrudelEngine {
       // Type says async but we return synchronously for tight timing - this is fine
       // The Web Audio API handles the actual scheduling via absoluteTime
       defaultOutput: async (hap: any, deadline: number, duration: number, cps: number, t: number): Promise<void> => {
-        // DEBUG: Log every trigger
-        const sound = hap.value?.s || hap.value?.note || '?';
-        console.log(`[strudel-engine] TRIGGER: ${sound} deadline=${deadline.toFixed(3)} osc=${this.oscEnabled}`);
-        
         // IMPORTANT: Don't await superdough - fire and forget for tight timing
         // The Web Audio API handles scheduling internally via absoluteTime
         

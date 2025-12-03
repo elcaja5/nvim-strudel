@@ -9,6 +9,8 @@ export class StrudelTcpServer {
   private server: net.Server | null = null;
   private clients: Set<net.Socket> = new Set();
   private messageHandler: ((msg: ClientMessage, socket: net.Socket) => void) | null = null;
+  private disconnectHandler: (() => void) | null = null;
+  private hasHadClient = false; // Track if we've ever had a client connect
 
   constructor(private config: ServerConfig) {}
 
@@ -21,6 +23,7 @@ export class StrudelTcpServer {
         this.server = net.createServer((socket) => {
           console.log('[strudel-server] Client connected');
           this.clients.add(socket);
+          this.hasHadClient = true;
 
           let buffer = '';
 
@@ -49,11 +52,21 @@ export class StrudelTcpServer {
           socket.on('close', () => {
             console.log('[strudel-server] Client disconnected');
             this.clients.delete(socket);
+            
+            // If we've had a client before and now have none, notify
+            if (this.hasHadClient && this.clients.size === 0 && this.disconnectHandler) {
+              this.disconnectHandler();
+            }
           });
 
           socket.on('error', (err) => {
             console.error('[strudel-server] Socket error:', err);
             this.clients.delete(socket);
+            
+            // If we've had a client before and now have none, notify
+            if (this.hasHadClient && this.clients.size === 0 && this.disconnectHandler) {
+              this.disconnectHandler();
+            }
           });
 
           // Send initial status
@@ -108,6 +121,14 @@ export class StrudelTcpServer {
    */
   onMessage(handler: (msg: ClientMessage, socket: net.Socket) => void): void {
     this.messageHandler = handler;
+  }
+
+  /**
+   * Register a handler for when all clients disconnect
+   * This is called when the last client disconnects (after at least one client has connected)
+   */
+  onAllClientsDisconnected(handler: () => void): void {
+    this.disconnectHandler = handler;
   }
 
   /**

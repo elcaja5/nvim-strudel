@@ -70,7 +70,7 @@ function M.debounce(fn, ms)
 end
 
 ---Server process handle
----@type userdata|nil
+---@type integer|nil
 M._server_job = nil
 
 ---Start the strudel server process
@@ -95,6 +95,8 @@ function M.start_server(cmd, on_start)
   local started = false
 
   M._server_job = vim.fn.jobstart(cmd, {
+    -- Don't detach - server should die when Neovim exits
+    detach = false,
     on_stdout = function(_, data)
       for _, line in ipairs(data) do
         if line ~= '' then
@@ -138,9 +140,16 @@ function M.start_server(cmd, on_start)
 end
 
 ---Stop the strudel server process
-function M.stop_server()
+---@param signal? string Signal to send ('term' or 'kill', default 'term')
+function M.stop_server(signal)
   if M._server_job then
-    vim.fn.jobstop(M._server_job)
+    signal = signal or 'term'
+    if signal == 'kill' then
+      vim.fn.jobstop(M._server_job)
+    else
+      -- Send SIGTERM for graceful shutdown
+      vim.fn.jobstop(M._server_job)
+    end
     M._server_job = nil
     M.log('Server stopped')
   end

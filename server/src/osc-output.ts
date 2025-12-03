@@ -1,6 +1,7 @@
 // @ts-ignore - osc has no type definitions
 import osc from 'osc';
-import { isNote, noteToMidi } from '@strudel/core/util.mjs';
+import { processValueForOsc, isBankSoundfont } from './sample-metadata.js';
+import { resolveDrumMachineBankSync } from './on-demand-loader.js';
 
 // Default SuperDirt ports
 const OSC_REMOTE_IP = '127.0.0.1';
@@ -73,35 +74,118 @@ export function getOscPort(): any {
 }
 
 /**
+ * Convert superdough-style gain to SuperDirt gain
+ * 
+ * superdough uses linear gain (default 0.8, pattern gain applied directly)
+ * SuperDirt uses: amp = 0.4 * gain^4
+ * 
+ * To match volumes, we invert SuperDirt's curve:
+ * If we want output level L, we need: 0.4 * gain^4 = L
+ * So: gain = (L / 0.4)^0.25 = (2.5 * L)^0.25
+ */
+function convertGainForSuperDirt(superdoughGain: number): number {
+  // superdough default gain is 0.8, so scale relative to that
+  const targetLevel = superdoughGain;
+  // Invert SuperDirt's gain curve: amp = 0.4 * gain^4
+  // gain = (targetLevel / 0.4)^0.25
+  return Math.pow(targetLevel / 0.4, 0.25);
+}
+
+/**
+ * Calculate ADSR values matching Strudel's getADSRValues behavior
+ * Returns [attack, decay, sustain, release] with proper defaults
+ */
+function getADSRValues(
+  attack?: number,
+  decay?: number, 
+  sustain?: number,
+  release?: number
+): [number, number, number, number] {
+  const envmin = 0.001;
+  const releaseMin = 0.01;
+  const envmax = 1;
+  
+  // If no params set, return defaults
+  if (attack == null && decay == null && sustain == null && release == null) {
+    return [envmin, envmin, envmax, releaseMin];
+  }
+  
+  // Calculate sustain level based on which params are set
+  // (matching Strudel's behavior)
+  let sustainLevel: number;
+  if (sustain != null) {
+    sustainLevel = sustain;
+  } else if ((attack != null && decay == null) || (attack == null && decay == null)) {
+    sustainLevel = envmax;
+  } else {
+    sustainLevel = envmin;
+  }
+  
+  return [
+    Math.max(attack ?? 0, envmin),
+    Math.max(decay ?? 0, envmin),
+    Math.min(sustainLevel, envmax),
+    Math.max(release ?? 0, releaseMin)
+  ];
+}
+
+/**
  * Convert a hap value to SuperDirt OSC message arguments
  * Based on @strudel/osc's parseControlsFromHap
  */
 function hapToOscArgs(hap: any, cps: number): any[] {
-  const value = hap.value || {};
+  const rawValue = hap.value || {};
   const begin = hap.wholeOrPart?.()?.begin?.valueOf?.() ?? 0;
   const duration = hap.duration?.valueOf?.() ?? 1;
   const delta = duration / cps;
 
-  // Build the controls object
+  // Process the value for pitched samples (converts note/freq to n + speed)
+  const processedValue = processValueForOsc(rawValue);
+
+  // Start with processed values, then apply defaults for missing fields
   const controls: Record<string, any> = {
+    ...processedValue,
     cps,
     cycle: begin,
     delta,
-    ...value,
   };
-
-  // Handle note/midi conversion
-  if (typeof controls.note !== 'undefined') {
-    if (isNote(controls.note)) {
-      controls.midinote = noteToMidi(controls.note, controls.octave || 3);
-    } else if (typeof controls.note === 'number') {
-      controls.midinote = controls.note;
-    }
+  
+  // Convert gain to match superdough volume levels
+  // superdough default is 0.8, pattern can override
+  const superdoughGain = controls.gain ?? 0.8;
+  controls.gain = convertGainForSuperDirt(superdoughGain);
+  
+  // Ensure 'n' defaults to 0 if not specified (first sample in bank)
+  if (controls.n === undefined) {
+    controls.n = 0;
+  }
+  
+  // Ensure 'speed' defaults to 1 if not specified
+  if (controls.speed === undefined) {
+    controls.speed = 1;
+  }
+  
+  // Ensure 'orbit' defaults to 0 if not specified (required by SuperDirt)
+  if (controls.orbit === undefined) {
+    controls.orbit = 0;
   }
 
-  // Handle bank prefix
+  // Handle bank prefix - maps Strudel bank aliases to full SuperDirt bank names
+  // e.g., bank="tr909" + s="bd" -> s="RolandTR909_bd"
   if (controls.bank && controls.s) {
-    controls.s = controls.bank + controls.s;
+    const bankAlias = String(controls.bank);
+    const sound = String(controls.s);
+    
+    // Try to resolve drum machine alias (tr909 -> RolandTR909)
+    const fullBankName = resolveDrumMachineBankSync(bankAlias);
+    if (fullBankName) {
+      // Drum machine: use full name with underscore separator
+      controls.s = `${fullBankName}_${sound}`;
+    } else {
+      // Unknown bank - just concatenate (original behavior)
+      controls.s = bankAlias + sound;
+    }
+    delete controls.bank; // Don't send bank to SuperDirt - we already applied it
   }
 
   // Handle roomsize -> size alias
@@ -113,13 +197,61 @@ function hapToOscArgs(hap: any, cps: number): any[] {
   if (controls.unit === 'c' && controls.speed != null) {
     controls.speed = controls.speed / cps;
   }
+  
+  // Handle tremolo parameter mapping
+  // Strudel uses: tremolo (Hz) or tremolosync (cycles), tremolodepth, tremoloskew, tremolophase, tremoloshape
+  // SuperDirt uses: tremolorate (Hz), tremolodepth
+  if (controls.tremolosync != null) {
+    // tremolosync is in cycles, convert to Hz using cps
+    controls.tremolorate = controls.tremolosync * cps;
+    delete controls.tremolosync;
+  } else if (controls.tremolo != null) {
+    // tremolo is already in Hz
+    controls.tremolorate = controls.tremolo;
+    delete controls.tremolo;
+  }
+  
+  // If tremolo is active but tremolodepth not specified, default to 1 (matching superdough)
+  // SuperDirt defaults to 0.5, but superdough defaults to 1
+  if (controls.tremolorate != null && controls.tremolodepth == null) {
+    controls.tremolodepth = 1;
+  }
+  
+  // Note: tremoloskew, tremolophase, tremoloshape are Strudel-specific and not supported by SuperDirt
+  // They will be passed through but ignored
+  
+  // Handle phaser parameter mapping
+  // Strudel uses: phaserrate, phaserdepth
+  // SuperDirt uses the same names, so no translation needed
+  
+  // Handle soundfont instruments
+  // Soundfonts need looping + ADSR envelope, so we use our custom strudel_soundfont synth
+  // Regular samples use the default dirt_sample synth (no looping)
+  const bankName = controls.s || controls.sound;
+  // Check if it's a soundfont: either registered as such OR starts with 'gm_' (GM soundfonts)
+  const isSoundfont = bankName && (isBankSoundfont(bankName) || bankName.startsWith('gm_'));
+  if (isSoundfont) {
+    // Use our custom soundfont synth that loops and applies ADSR
+    // Soundfont samples are stereo (converted by ffmpeg with -ac 2)
+    controls.instrument = 'strudel_soundfont_2_2';
+    
+    // Use custom parameter names (sfAttack, sfRelease, sfSustain) to avoid
+    // SuperDirt's internal parameter handling which overrides standard names
+    if (controls.sfAttack == null) controls.sfAttack = controls.attack ?? 0.01;
+    if (controls.sfRelease == null) controls.sfRelease = controls.release ?? 0.1;
+    // sfSustain controls how long the note plays (use note duration from pattern)
+    if (controls.sfSustain == null) controls.sfSustain = controls.sustain ?? delta;
+    
+    // speed is critical - without it SuperDirt passes invalid value and synth is silent
+    if (controls.speed == null) controls.speed = 1;
+  }
 
   // Flatten to array of [key, value, key, value, ...]
   const args: any[] = [];
   for (const [key, val] of Object.entries(controls)) {
     if (val !== undefined && val !== null) {
       args.push({ type: 's', value: key });
-      
+
       // Determine OSC type
       if (typeof val === 'number') {
         args.push({ type: 'f', value: val });
@@ -140,13 +272,16 @@ function hapToOscArgs(hap: any, cps: number): any[] {
  * @param deadline Seconds until the event should play
  * @param cps Cycles per second (tempo)
  */
-let oscDebug = false;
+let oscDebug = false; // Set to true for debugging
 
 export function setOscDebug(enabled: boolean): void {
   oscDebug = enabled;
 }
 
 export function sendHapToSuperDirt(hap: any, deadline: number, cps: number): void {
+  if (oscDebug) {
+    console.log(`[osc] sendHapToSuperDirt called, hap.value:`, JSON.stringify(hap.value));
+  }
   if (!udpPort || !isOpen) {
     // Silently skip if OSC not connected
     return;
@@ -155,22 +290,31 @@ export function sendHapToSuperDirt(hap: any, deadline: number, cps: number): voi
   try {
     const args = hapToOscArgs(hap, cps);
     
-    // Create timed OSC bundle
-    const timestampMs = deadline * 1000;
+    if (oscDebug) {
+      // Just dump key args
+      const argsObj: Record<string, any> = {};
+      for (let i = 0; i < args.length; i += 2) {
+        if (args[i]?.value && args[i+1]) {
+          argsObj[args[i].value] = args[i+1].value;
+        }
+      }
+      const speedStr = argsObj.speed?.toFixed?.(4) || argsObj.speed;
+      const noteStr = argsObj.note !== undefined ? ` note=${argsObj.note}` : '';
+      const tremStr = argsObj.tremolorate !== undefined ? ` tremolorate=${argsObj.tremolorate?.toFixed?.(2)} tremolodepth=${argsObj.tremolodepth}` : '';
+      const envStr = argsObj.attack !== undefined ? ` attack=${argsObj.attack?.toFixed?.(3)} release=${argsObj.release?.toFixed?.(3)} sustain=${argsObj.sustain?.toFixed?.(3)}` : '';
+      const sfEnvStr = argsObj.sfSustain !== undefined ? ` sfAttack=${argsObj.sfAttack?.toFixed?.(3)} sfRelease=${argsObj.sfRelease?.toFixed?.(3)} sfSustain=${argsObj.sfSustain?.toFixed?.(3)}` : '';
+      const instrStr = argsObj.instrument ? ` instrument=${argsObj.instrument}` : '';
+      const orbitStr = argsObj.orbit !== undefined ? ` orbit=${argsObj.orbit}` : ' orbit=MISSING';
+      console.log(`[osc] SEND: s=${argsObj.s} n=${argsObj.n}${orbitStr} speed=${speedStr}${noteStr}${tremStr}${envStr}${sfEnvStr}${instrStr} gain=${argsObj.gain?.toFixed?.(2)}`);
+    }
+    
+    // Send immediate message (no time bundle) - simpler and more reliable
     const msg = {
-      timeTag: osc.timeTag(0, timestampMs),
-      packets: [{
-        address: '/dirt/play',
-        args,
-      }],
+      address: '/dirt/play',
+      args,
     };
 
     udpPort.send(msg);
-    
-    if (oscDebug) {
-      const sound = hap.value?.s || hap.value?.note || '?';
-      console.log(`[osc] Sent: ${sound} (deadline: ${deadline.toFixed(3)}s)`);
-    }
   } catch (err) {
     console.error('[osc] Error sending hap:', err);
   }

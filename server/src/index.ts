@@ -10,10 +10,10 @@
  * Command-line arguments:
  *   --port <port>         TCP server port (default: 37812)
  *   --host <host>         TCP server host (default: 127.0.0.1)
- *   --osc                 Use OSC output (SuperDirt) instead of Web Audio
+ *   --osc                 Use OSC output (SuperDirt) - auto-starts SuperDirt if available
  *   --osc-host <host>     SuperDirt OSC host (default: 127.0.0.1)
  *   --osc-port <port>     SuperDirt OSC port (default: 57120)
- *   --auto-superdirt      Auto-start SuperDirt if sclang available
+ *   --no-auto-superdirt   Don't auto-start SuperDirt (assumes it's already running)
  *   --superdirt-verbose   Show SuperCollider output
  */
 
@@ -56,7 +56,7 @@ function parseArgs(): {
     useOsc: false,
     oscHost: DEFAULT_OSC_HOST,
     oscPort: DEFAULT_OSC_PORT,
-    autoSuperDirt: false,
+    autoSuperDirt: true, // Default to true, --osc will use this
     superDirtVerbose: false,
   };
 
@@ -78,8 +78,8 @@ function parseArgs(): {
       case '--osc-port':
         result.oscPort = parseInt(args[++i], 10);
         break;
-      case '--auto-superdirt':
-        result.autoSuperDirt = true;
+      case '--no-auto-superdirt':
+        result.autoSuperDirt = false;
         break;
       case '--superdirt-verbose':
         result.superDirtVerbose = true;
@@ -300,22 +300,58 @@ async function main() {
     process.exit(1);
   }
 
+  // Shutdown when all clients disconnect (e.g., Neovim quits)
+  server.onAllClientsDisconnected(() => {
+    console.log('[strudel-server] All clients disconnected, shutting down...');
+    shutdown('all clients disconnected');
+  });
+
   // Handle graceful shutdown
-  const shutdown = async () => {
-    console.log('[strudel-server] Shutting down...');
-    engine.dispose();
-    await server.stop();
+  let isShuttingDown = false;
+  const shutdown = async (signal?: string) => {
+    if (isShuttingDown) return; // Prevent double shutdown
+    isShuttingDown = true;
+    
+    console.log(`[strudel-server] Shutting down${signal ? ` (${signal})` : ''}...`);
+    
+    try {
+      engine.dispose();
+    } catch (e) {
+      // Ignore errors during disposal
+    }
+    
+    try {
+      await server.stop();
+    } catch (e) {
+      // Ignore errors during stop
+    }
     
     // Stop SuperDirt if we started it
     if (superDirtLauncher) {
-      superDirtLauncher.stop();
+      try {
+        superDirtLauncher.stop();
+      } catch (e) {
+        // Ignore errors
+      }
     }
     
     process.exit(0);
   };
 
-  process.on('SIGINT', shutdown);
-  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGHUP', () => shutdown('SIGHUP'));
+  
+  // Handle uncaught errors to prevent orphaned processes
+  process.on('uncaughtException', (err) => {
+    console.error('[strudel-server] Uncaught exception:', err);
+    shutdown('uncaughtException');
+  });
+  
+  process.on('unhandledRejection', (reason) => {
+    console.error('[strudel-server] Unhandled rejection:', reason);
+    // Don't exit on unhandled rejections, just log them
+  });
 }
 
 main().catch((err) => {

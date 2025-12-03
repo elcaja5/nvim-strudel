@@ -81,6 +81,20 @@ function M.setup(opts)
   -- Store server command for later use
   M._server_cmd = get_server_cmd
 
+  -- Setup cleanup on Neovim exit
+  -- This ensures the server (and its child processes like SuperDirt) are killed
+  local augroup = vim.api.nvim_create_augroup('StrudelCleanup', { clear = true })
+  vim.api.nvim_create_autocmd('VimLeavePre', {
+    group = augroup,
+    callback = function()
+      local utils = require('strudel.utils')
+      if utils._server_job then
+        utils.debug('Stopping server on Neovim exit')
+        utils.stop_server()
+      end
+    end,
+  })
+
   initialized = true
 
   require('strudel.utils').debug('nvim-strudel initialized')

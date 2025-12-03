@@ -35,6 +35,7 @@ export interface SuperDirtLauncherOptions {
 
 export class SuperDirtLauncher {
   private sclangProcess: ChildProcess | null = null;
+  private sclangPid: number | null = null;
   private isRunning = false;
   private options: Required<SuperDirtLauncherOptions>;
   private tempScriptPath: string | null = null;
@@ -93,6 +94,7 @@ export class SuperDirtLauncher {
   /**
    * Generate the startup script with current options
    * Includes Strudel sample loading handler for dynamic sample loading
+   * and custom SynthDefs for ADSR envelope support
    */
   private generateStartupScript(): string {
     const { port, channels, orbits } = this.options;
@@ -109,6 +111,10 @@ s.options.maxNodes = 1024 * 32;     // 32768 nodes
 
 s.waitForBoot {
     "*** SuperCollider server booted ***".postln;
+    
+    // Increase latency to avoid "late" messages
+    s.latency = 0.3;
+    
     ~dirt = SuperDirt(${channels}, s);
     ~dirt.loadSoundFiles;
     
@@ -123,6 +129,63 @@ s.waitForBoot {
     
     s.sync;
     ~dirt.start(${port}, 0 ! ${orbits});
+    
+    // ========================================
+    // Strudel Soundfont SynthDefs
+    // These loop samples and apply ADSR envelope - used for soundfont instruments
+    // Regular samples use the default dirt_sample SynthDefs (no looping)
+    // ========================================
+    
+    (1..SuperDirt.maxSampleNumChannels).do { |sampleNumChannels|
+      var name = format("strudel_soundfont_%_%", sampleNumChannels, ${channels});
+      
+      // Soundfont synth: loops sample with ADSR envelope
+      // NOTE: We use custom parameter names (sfAttack, sfRelease, sfSustain) to avoid
+      // SuperDirt's internal parameter handling which overrides standard names
+      SynthDef(name, { |out, bufnum, sustain = 1, begin = 0, end = 1, speed = 1, endSpeed = 1, 
+                        freq = 440, pan = 0, sfAttack = 0.01, sfRelease = 0.1, sfSustain = 1|
+        var sound, rate, phase, numFrames, env, holdTime, phasorRate;
+        
+        numFrames = max(BufFrames.ir(bufnum), 1);
+        
+        // Use speed directly - it's already pitch-adjusted
+        rate = Line.kr(speed, endSpeed, sfSustain);
+        
+        // Phasor rate: samples to advance per audio sample
+        phasorRate = rate * BufRateScale.ir(bufnum);
+        
+        // Loop through sample using Phasor
+        phase = Phasor.ar(0, phasorRate, begin * numFrames, end * numFrames, begin * numFrames);
+        
+        sound = BufRd.ar(
+          numChannels: sampleNumChannels,
+          bufnum: bufnum,
+          phase: phase,
+          loop: 1,
+          interpolation: 4
+        );
+        
+        // ADSR envelope using our custom params
+        holdTime = max(0.001, sfSustain - sfAttack - sfRelease);
+        env = EnvGen.kr(
+          Env.linen(sfAttack, holdTime, sfRelease, 1, \\sin),
+          doneAction: 2
+        );
+        
+        sound = sound * env;
+        sound = DirtPan.ar(sound, ${channels}, pan);
+        
+        Out.ar(out, sound)
+      }, [\\ir, \\ir, \\ir, \\ir, \\ir, \\ir, \\ir, \\ir, \\kr, \\ir, \\ir, \\ir]).add;
+      
+      ("Strudel: Added " ++ name).postln;
+    };
+    
+    "*** Strudel soundfont SynthDefs loaded ***".postln;
+    
+    // ========================================
+    // OSC Handlers
+    // ========================================
     
     // OSC handler for dynamic sample loading from Strudel
     // When new samples are downloaded, the server sends this message
@@ -179,7 +242,16 @@ s.waitForBoot {
       
       this.sclangProcess = spawn('sclang', [this.tempScriptPath!], {
         stdio: ['ignore', 'pipe', 'pipe'],
+        // Don't detach - sclang should die when parent dies
+        detached: false,
       });
+      
+      // On Unix, set up parent death signal so sclang dies if we crash
+      // This uses prctl(PR_SET_PDEATHSIG) on Linux via a workaround
+      if (process.platform !== 'win32' && this.sclangProcess.pid) {
+        // Store PID for cleanup tracking
+        this.sclangPid = this.sclangProcess.pid;
+      }
 
       let stdoutBuffer = '';
 
@@ -243,17 +315,40 @@ s.waitForBoot {
       // Try graceful shutdown first
       this.sclangProcess.kill('SIGTERM');
       
+      // Also kill any child processes (scsynth is spawned by sclang)
+      if (this.sclangPid) {
+        try {
+          // Kill the entire process group if on Unix
+          if (process.platform !== 'win32') {
+            // Try to kill any scsynth processes that might be children
+            execSync(`pkill -P ${this.sclangPid} 2>/dev/null || true`, { stdio: 'ignore' });
+          }
+        } catch {
+          // Ignore errors
+        }
+      }
+      
       // Force kill after timeout
+      const pid = this.sclangPid;
       setTimeout(() => {
         if (this.sclangProcess && !this.sclangProcess.killed) {
           console.log('[superdirt] Force killing sclang...');
           this.sclangProcess.kill('SIGKILL');
+        }
+        // Also force kill by PID if needed
+        if (pid && process.platform !== 'win32') {
+          try {
+            execSync(`kill -9 ${pid} 2>/dev/null || true`, { stdio: 'ignore' });
+          } catch {
+            // Ignore
+          }
         }
       }, 2000);
     }
     
     this.cleanup();
     this.isRunning = false;
+    this.sclangPid = null;
   }
 
   /**
