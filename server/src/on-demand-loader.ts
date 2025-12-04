@@ -317,7 +317,7 @@ async function loadDrumMachineBank(fullBankName: string): Promise<boolean> {
     const { bankNames } = await loadSamples(bankInfo.source, bankInfo.baseUrl);
     if (bankNames.length > 0) {
       console.log(`[on-demand] Loaded drum machine bank: ${fullBankName}`);
-      notifySuperDirtLoadSamples(getCacheDir());
+      // Don't notify here - we'll do a single notify after all loads complete
       return true;
     }
     return false;
@@ -362,7 +362,7 @@ async function loadSound(name: string): Promise<boolean> {
             console.log(`[on-demand] Loaded soundfont: ${name}`);
             // Register metadata for note -> n + speed conversion
             registerSoundfontFromCache(name);
-            notifySuperDirtLoadSamples(getCacheDir());
+            // Don't notify here - we'll do a single notify after all loads complete
             return true;
           }
         }
@@ -373,7 +373,7 @@ async function loadSound(name: string): Promise<boolean> {
         const { bankNames } = await loadSamples(bankInfo.source, bankInfo.baseUrl);
         if (bankNames.length > 0) {
           console.log(`[on-demand] Loaded CDN bank: ${name}`);
-          notifySuperDirtLoadSamples(getCacheDir());
+          // Don't notify here - we'll do a single notify after all loads complete
           return true;
         }
         return false;
@@ -476,10 +476,8 @@ export async function loadSoundsForCode(code: string): Promise<string[]> {
   
   if (loaded.length > 0) {
     console.log(`[on-demand] Loaded ${loaded.length} sounds: ${loaded.join(', ')}`);
-    // Give SuperDirt time to load the samples after we notified it
-    // SuperDirt's loadSoundFiles is async and we don't have a completion callback
-    await new Promise(resolve => setTimeout(resolve, 500));
-    console.log(`[on-demand] Waited for SuperDirt to load samples`);
+    // Notify SuperDirt to reload the sample folders
+    notifySuperDirtLoadSamples(getCacheDir(), 0);
   } else {
     console.log('[on-demand] All sounds already cached or not loadable');
   }

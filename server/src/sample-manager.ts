@@ -27,6 +27,8 @@ const CONVERTIBLE_FORMATS = ['.mp3', '.ogg', '.m4a', '.flac', '.webm'];
 const NATIVE_FORMATS = ['.wav', '.aif', '.aiff', '.aifc'];
 
 let oscPort: any = null;
+let replyPort: any = null; // For receiving confirmation from SuperDirt
+let pendingLoadCallbacks: Map<string, () => void> = new Map();
 
 /**
  * Initialize the sample manager
@@ -48,7 +50,48 @@ export async function initSampleManager(): Promise<void> {
     console.warn('[sample-manager] Install ffmpeg: sudo pacman -S ffmpeg (Arch) or apt install ffmpeg (Debian)');
   }
 
+  // Note: Reply port for SuperDirt confirmation is set up lazily when needed
+
   console.log(`[sample-manager] Initialized, cache: ${CACHE_DIR}`);
+}
+
+/**
+ * Set up OSC port for receiving confirmation messages from SuperDirt
+ */
+async function setupReplyPort(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    replyPort = new osc.UDPPort({
+      localAddress: '127.0.0.1',
+      localPort: 0, // Let OS assign a port
+    });
+
+    replyPort.on('message', (msg: any) => {
+      if (msg.address === '/strudel/samplesLoaded') {
+        const path = msg.args?.[0];
+        console.log(`[sample-manager] SuperDirt confirmed samples loaded: ${path}`);
+        
+        // Resolve any pending callbacks for this path
+        const callback = pendingLoadCallbacks.get(path);
+        if (callback) {
+          callback();
+          pendingLoadCallbacks.delete(path);
+        }
+      }
+    });
+
+    replyPort.on('ready', () => {
+      const actualPort = replyPort.socket?.address()?.port || 0;
+      console.log(`[sample-manager] Reply port listening on ${actualPort}`);
+      resolve();
+    });
+
+    replyPort.on('error', (err: Error) => {
+      console.error('[sample-manager] Reply port error:', err);
+      reject(err);
+    });
+
+    replyPort.open();
+  });
 }
 
 /**
@@ -208,21 +251,51 @@ export async function loadSamples(
 /**
  * Notify SuperDirt to load samples from the cache directory
  * Sends an OSC message that triggers the custom handler in SuperDirt
+ * @param path The path to load samples from
+ * @param timeout Maximum time to wait for confirmation (ms), 0 = fire and forget (default)
  */
-export function notifySuperDirtLoadSamples(path: string = CACHE_DIR): void {
+export function notifySuperDirtLoadSamples(path: string = CACHE_DIR, timeout: number = 0): Promise<boolean> {
   if (!oscPort) {
     console.warn('[sample-manager] OSC not connected, cannot notify SuperDirt');
-    return;
+    return Promise.resolve(false);
   }
 
+  const fullPath = path + '/*';
+  
   try {
+    // Get the reply port number to send to SuperDirt
+    const replyPortNum = timeout > 0 ? (replyPort?.socket?.address()?.port || 0) : 0;
+    
+    // Send the load request
     oscPort.send({
       address: '/strudel/loadSamples',
-      args: [{ type: 's', value: path + '/*' }],
+      args: [
+        { type: 's', value: fullPath },
+        { type: 'i', value: replyPortNum },
+      ],
     });
     console.log(`[sample-manager] Notified SuperDirt to load samples from: ${path}`);
+    
+    // If no timeout, fire and forget
+    if (timeout <= 0) {
+      return Promise.resolve(true);
+    }
+    
+    // Wait for confirmation with timeout
+    return new Promise<boolean>((resolve) => {
+      pendingLoadCallbacks.set(fullPath, () => resolve(true));
+      
+      setTimeout(() => {
+        if (pendingLoadCallbacks.has(fullPath)) {
+          console.warn(`[sample-manager] Timeout waiting for SuperDirt confirmation`);
+          pendingLoadCallbacks.delete(fullPath);
+          resolve(false);
+        }
+      }, timeout);
+    });
   } catch (err) {
     console.error('[sample-manager] Failed to notify SuperDirt:', err);
+    return Promise.resolve(false);
   }
 }
 

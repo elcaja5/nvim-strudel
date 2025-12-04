@@ -104,11 +104,18 @@ export class SuperDirtLauncher {
     const escapedSamplesDir = STRUDEL_SAMPLES_DIR.replace(/\\/g, '\\\\');
     
     return `(
+// Kill any existing servers to ensure clean state
+// This is important because server options must be set BEFORE boot
+Server.killAll;
+
 // Optimized server settings for heavy sample usage
+// MUST be set before boot, otherwise defaults are used
 s.options.numBuffers = 1024 * 256;  // 262144 buffers for samples
 s.options.memSize = 8192 * 32;      // 256MB memory
 s.options.numWireBufs = 128;        // More interconnect buffers
 s.options.maxNodes = 1024 * 32;     // 32768 nodes
+
+"Server options configured, booting server...".postln;
 
 s.waitForBoot {
     "*** SuperCollider server booted ***".postln;
@@ -190,11 +197,20 @@ s.waitForBoot {
     
     // OSC handler for dynamic sample loading from Strudel
     // When new samples are downloaded, the server sends this message
+    // After loading, sends confirmation back to the server
     OSCdef(\\strudelLoadSamples, { |msg|
-        var path = msg[1].asString;
+        var path, replyPort;
+        path = msg[1].asString;
+        // Use SC's if() syntax - the ? operator doesn't work like JS ternary
+        replyPort = if(msg[2].notNil, { msg[2].asInteger }, { 0 });
         "Strudel: Loading samples from %".format(path).postln;
         ~dirt.loadSoundFiles(path);
         "Strudel: Samples loaded".postln;
+        // Send confirmation back to the server if reply port was provided
+        if(replyPort > 0, {
+            NetAddr("127.0.0.1", replyPort).sendMsg('/strudel/samplesLoaded', path);
+            "Strudel: Sent load confirmation to port %".format(replyPort).postln;
+        });
     }, '/strudel/loadSamples');
     
     "*** SuperDirt listening on port ${port} ***".postln;
