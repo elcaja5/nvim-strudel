@@ -68,6 +68,7 @@ class NodeMIDIOutput {
 class NodeMIDIInput {
   private input: any;
   private portIndex: number;
+  private _onmidimessage: ((event: any) => void) | null = null;
   readonly id: string;
   readonly name: string;
   readonly manufacturer: string = 'node-midi';
@@ -75,27 +76,44 @@ class NodeMIDIInput {
   readonly type: 'input' = 'input';
   readonly state: 'connected' | 'disconnected' = 'connected';
   readonly connection: 'open' | 'closed' | 'pending' = 'closed';
-  onmidimessage: ((event: any) => void) | null = null;
 
   constructor(portIndex: number, name: string) {
     this.input = new midi.Input();
     this.portIndex = portIndex;
     this.id = `input-${portIndex}`;
     this.name = name;
+    
+    // Set up the message handler on construction
+    // It will forward messages to onmidimessage if set
+    this.input.on('message', (deltaTime: number, message: number[]) => {
+      if (this._onmidimessage) {
+        this._onmidimessage({
+          data: new Uint8Array(message),
+          timeStamp: performance.now(),
+          // Add dataBytes for @strudel/midi compatibility
+          dataBytes: message.slice(1),
+        });
+      }
+    });
+  }
+
+  // Getter/setter for onmidimessage that auto-opens the port
+  get onmidimessage(): ((event: any) => void) | null {
+    return this._onmidimessage;
+  }
+
+  set onmidimessage(handler: ((event: any) => void) | null) {
+    this._onmidimessage = handler;
+    // Auto-open the port when a handler is set (per Web MIDI API spec)
+    if (handler && (this as any).connection !== 'open') {
+      this.open();
+    }
   }
 
   open(): Promise<NodeMIDIInput> {
     if ((this as any).connection !== 'open') {
       this.input.openPort(this.portIndex);
       this.input.ignoreTypes(false, false, false);
-      this.input.on('message', (deltaTime: number, message: number[]) => {
-        if (this.onmidimessage) {
-          this.onmidimessage({
-            data: new Uint8Array(message),
-            timeStamp: performance.now(),
-          });
-        }
-      });
       (this as any).connection = 'open';
     }
     return Promise.resolve(this);
