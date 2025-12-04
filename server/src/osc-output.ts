@@ -152,8 +152,9 @@ function hapToOscArgs(hap: any, cps: number): any[] {
   
   // Convert gain to match superdough volume levels
   // superdough default is 0.8, pattern can override
-  const superdoughGain = controls.gain ?? 0.8;
-  controls.gain = convertGainForSuperDirt(superdoughGain);
+  // Note: soundfont gain compensation (0.3 factor) is applied later for soundfonts
+  let superdoughGain = controls.gain ?? 0.8;
+  controls.gain = superdoughGain; // Store raw gain, convert later after soundfont check
   
   // Ensure 'n' defaults to 0 if not specified (first sample in bank)
   if (controls.n === undefined) {
@@ -176,20 +177,27 @@ function hapToOscArgs(hap: any, cps: number): any[] {
     const bankAlias = String(controls.bank);
     const sound = String(controls.s);
     
-    // Check if Strudel already prefixed the sound name with the bank
-    // (e.g., s="RolandTR909_bd" with bank="RolandTR909")
-    if (sound.startsWith(bankAlias + '_') || sound.startsWith(bankAlias)) {
-      // Sound already has bank prefix - don't double-prefix
-      // Just keep 's' as-is
-    } else {
-      // Try to resolve drum machine alias (tr909 -> RolandTR909)
-      const fullBankName = resolveDrumMachineBankSync(bankAlias);
+    // Try to resolve drum machine alias (tr909 -> RolandTR909)
+    const fullBankName = resolveDrumMachineBankSync(bankAlias);
+    
+    // Check if Strudel already prefixed the sound name with the bank alias
+    // (e.g., s="tr909_sd" with bank="tr909")
+    if (sound.startsWith(bankAlias + '_')) {
       if (fullBankName) {
-        // Drum machine: use full name with underscore separator
+        // Replace alias prefix with full bank name: tr909_sd -> RolandTR909_sd
+        controls.s = fullBankName + '_' + sound.slice(bankAlias.length + 1);
+      }
+      // else keep as-is (unknown alias)
+    } else if (sound.startsWith(fullBankName + '_')) {
+      // Already has full bank prefix (e.g., s="RolandTR909_bd" with bank="RolandTR909")
+      // Keep as-is
+    } else {
+      // Sound doesn't have bank prefix, add it
+      if (fullBankName) {
         controls.s = `${fullBankName}_${sound}`;
       } else {
         // Unknown bank - just concatenate (original behavior)
-        controls.s = bankAlias + sound;
+        controls.s = bankAlias + '_' + sound;
       }
     }
     delete controls.bank; // Don't send bank to SuperDirt - we already applied it
@@ -256,8 +264,12 @@ function hapToOscArgs(hap: any, cps: number): any[] {
     // In superdough, samples use getParamADSR with max gain 1.0 (sampler.mjs:315)
     // while soundfonts use max gain 0.3 (fontloader.mjs:163)
     // This compensates for soundfont samples being normalized louder than Dirt-Samples
+    // Apply BEFORE converting to SuperDirt gain curve
     controls.gain = controls.gain * 0.3;
   }
+  
+  // Now convert gain to SuperDirt's gain curve (applies to all sounds)
+  controls.gain = convertGainForSuperDirt(controls.gain);
 
   // Flatten to array of [key, value, key, value, ...]
   const args: any[] = [];
