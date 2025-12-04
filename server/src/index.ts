@@ -292,16 +292,30 @@ async function main() {
   // Shutdown when all clients disconnect (e.g., Neovim quits)
   server.onAllClientsDisconnected(() => {
     console.log('[strudel-server] All clients disconnected, shutting down...');
-    shutdown('all clients disconnected');
+    shutdownSync('all clients disconnected');
   });
 
   // Handle graceful shutdown
+  // IMPORTANT: Signal handlers must be synchronous because Node.js doesn't wait
+  // for async operations before exiting. We use synchronous cleanup here.
   let isShuttingDown = false;
-  const shutdown = async (signal?: string) => {
+  
+  const shutdownSync = (signal?: string) => {
     if (isShuttingDown) return; // Prevent double shutdown
     isShuttingDown = true;
     
     console.log(`[strudel-server] Shutting down${signal ? ` (${signal})` : ''}...`);
+    
+    // Stop SuperDirt FIRST (synchronously stops JACK if we started it)
+    // This MUST happen before process.exit() or JACK will be orphaned
+    if (superDirtLauncher) {
+      try {
+        console.log('[strudel-server] Stopping SuperDirt and JACK...');
+        superDirtLauncher.stop();
+      } catch (e) {
+        console.error('[strudel-server] Error stopping SuperDirt:', e);
+      }
+    }
     
     try {
       engine.dispose();
@@ -310,41 +324,40 @@ async function main() {
     }
     
     try {
-      await server.stop();
+      server.stopSync();
     } catch (e) {
       // Ignore errors during stop
-    }
-    
-    // Stop SuperDirt if we started it (also stops JACK if we started it)
-    // This MUST complete before we exit, otherwise JACK is left running
-    if (superDirtLauncher) {
-      try {
-        console.log('[strudel-server] Stopping SuperDirt and JACK...');
-        superDirtLauncher.stop();
-        // Give a moment for cleanup to complete
-        await new Promise(resolve => setTimeout(resolve, 500));
-      } catch (e) {
-        console.error('[strudel-server] Error stopping SuperDirt:', e);
-      }
     }
     
     console.log('[strudel-server] Shutdown complete');
     process.exit(0);
   };
 
-  process.on('SIGINT', () => shutdown('SIGINT'));
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
-  process.on('SIGHUP', () => shutdown('SIGHUP'));
+  process.on('SIGINT', () => shutdownSync('SIGINT'));
+  process.on('SIGTERM', () => shutdownSync('SIGTERM'));
+  process.on('SIGHUP', () => shutdownSync('SIGHUP'));
   
   // Handle uncaught errors to prevent orphaned processes
   process.on('uncaughtException', (err) => {
     console.error('[strudel-server] Uncaught exception:', err);
-    shutdown('uncaughtException');
+    shutdownSync('uncaughtException');
   });
   
   process.on('unhandledRejection', (reason) => {
     console.error('[strudel-server] Unhandled rejection:', reason);
     // Don't exit on unhandled rejections, just log them
+  });
+  
+  // Last-resort cleanup on exit (in case signal handlers didn't run)
+  process.on('exit', (code) => {
+    if (!isShuttingDown && superDirtLauncher) {
+      console.log('[strudel-server] Exit handler: cleaning up SuperDirt/JACK...');
+      try {
+        superDirtLauncher.stop();
+      } catch {
+        // Ignore
+      }
+    }
   });
 }
 

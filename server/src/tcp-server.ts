@@ -117,6 +117,24 @@ export class StrudelTcpServer {
   }
 
   /**
+   * Stop the TCP server synchronously (for signal handlers)
+   * Doesn't wait for close callback since we're about to exit anyway
+   */
+  stopSync(): void {
+    if (this.server) {
+      // Close all client connections
+      for (const client of this.clients) {
+        client.destroy();
+      }
+      this.clients.clear();
+
+      // Close server (callback may not run if process exits)
+      this.server.close();
+      console.log('[strudel-server] Server stopped');
+    }
+  }
+
+  /**
    * Register a message handler
    */
   onMessage(handler: (msg: ClientMessage, socket: net.Socket) => void): void {

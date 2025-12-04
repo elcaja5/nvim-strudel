@@ -348,49 +348,65 @@ s.waitForBoot {
   /**
    * Stop SuperDirt and cleanup
    * Also stops JACK if we started it
+   * This method is synchronous to work properly in signal handlers
    */
   stop(): void {
     console.log('[superdirt] stop() called, weStartedJack:', this.weStartedJack);
     
     if (this.sclangProcess) {
-      console.log('[superdirt] Stopping sclang...');
+      console.log('[superdirt] Stopping sclang (PID:', this.sclangPid, ')...');
       
-      // Try graceful shutdown first
-      this.sclangProcess.kill('SIGTERM');
+      // Kill sclang process
+      try {
+        this.sclangProcess.kill('SIGTERM');
+      } catch {
+        // Process may already be dead
+      }
       
       // Also kill any child processes (scsynth is spawned by sclang)
-      if (this.sclangPid) {
+      if (this.sclangPid && process.platform !== 'win32') {
         try {
-          // Kill the entire process group if on Unix
-          if (process.platform !== 'win32') {
-            // Try to kill any scsynth processes that might be children
-            execSync(`pkill -P ${this.sclangPid} 2>/dev/null || true`, { stdio: 'ignore' });
-          }
+          // Kill any child processes (scsynth)
+          execSync(`pkill -P ${this.sclangPid} 2>/dev/null || true`, { stdio: 'ignore', timeout: 2000 });
         } catch {
           // Ignore errors
         }
+        
+        // Force kill sclang by PID
+        try {
+          execSync(`kill -9 ${this.sclangPid} 2>/dev/null || true`, { stdio: 'ignore', timeout: 2000 });
+        } catch {
+          // Ignore
+        }
+      }
+    }
+    
+    // Kill ALL sclang and scsynth processes (not just ours)
+    // This ensures nothing is keeping JACK alive
+    if (process.platform !== 'win32') {
+      try {
+        execSync('pkill -9 sclang 2>/dev/null || true', { stdio: 'ignore', timeout: 2000 });
+      } catch {
+        // Ignore
+      }
+      try {
+        execSync('pkill -9 scsynth 2>/dev/null || true', { stdio: 'ignore', timeout: 2000 });
+      } catch {
+        // Ignore
       }
       
-      // Force kill after timeout
-      const pid = this.sclangPid;
-      setTimeout(() => {
-        if (this.sclangProcess && !this.sclangProcess.killed) {
-          console.log('[superdirt] Force killing sclang...');
-          this.sclangProcess.kill('SIGKILL');
-        }
-        // Also force kill by PID if needed
-        if (pid && process.platform !== 'win32') {
-          try {
-            execSync(`kill -9 ${pid} 2>/dev/null || true`, { stdio: 'ignore' });
-          } catch {
-            // Ignore
-          }
-        }
-      }, 2000);
+      // Wait a moment for processes to die before stopping JACK
+      // JACK won't stop if clients are still connected
+      try {
+        execSync('sleep 0.5', { stdio: 'ignore', timeout: 2000 });
+      } catch {
+        // Ignore
+      }
     }
     
     this.cleanup();
     this.isRunning = false;
+    this.sclangProcess = null;
     this.sclangPid = null;
     
     // Stop JACK if we started it
@@ -555,11 +571,11 @@ export function stopJack(): void {
   }
 
   // Check if JACK is actually running before trying to stop
-  // Use jack_control status which is reliable
   let jackRunning = false;
   try {
     const result = execSync('jack_control status 2>&1', { timeout: 5000 }).toString();
     jackRunning = result.split('\n').some(line => line.trim() === 'started');
+    console.log('[jack] Current status:', jackRunning ? 'started' : 'stopped');
   } catch {
     // If we can't check status, assume it might be running
     jackRunning = true;
@@ -572,25 +588,54 @@ export function stopJack(): void {
 
   console.log('[jack] Stopping JACK...');
   
-  // Method 1: Try jack_control (DBus) - this is the proper way on modern systems
-  try {
-    execSync('jack_control stop 2>&1', { timeout: 10000, stdio: 'pipe' });
-    // Verify it stopped
-    const result = execSync('jack_control status 2>&1', { timeout: 5000 }).toString();
-    if (result.split('\n').some(line => line.trim() === 'stopped')) {
-      console.log('[jack] JACK stopped via DBus');
-      return;
+  // Try up to 3 times with a small delay between attempts
+  // JACK might not stop immediately if clients are disconnecting
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      execSync('jack_control stop 2>&1', { timeout: 10000, stdio: 'pipe' });
+      
+      // Small delay then verify it stopped
+      execSync('sleep 0.3', { stdio: 'ignore', timeout: 2000 });
+      
+      const result = execSync('jack_control status 2>&1', { timeout: 5000 }).toString();
+      if (result.split('\n').some(line => line.trim() === 'stopped')) {
+        console.log('[jack] JACK stopped via DBus (attempt', attempt + ')');
+        return;
+      }
+      console.log('[jack] jack_control stop attempt', attempt, '- still running, retrying...');
+    } catch (err) {
+      console.log('[jack] jack_control stop attempt', attempt, 'failed:', err);
     }
-  } catch (err) {
-    // jack_control failed, try other methods
-    console.log('[jack] jack_control stop failed, trying other methods...');
+    
+    // Wait before retry
+    if (attempt < 3) {
+      try {
+        execSync('sleep 0.5', { stdio: 'ignore', timeout: 2000 });
+      } catch {
+        // Ignore
+      }
+    }
   }
   
-  // Method 2: Kill jackd directly (if running standalone, not via DBus)
+  // Fallback: Kill jackd directly (if running standalone, not via DBus)
+  console.log('[jack] DBus stop failed, trying pkill jackd...');
   try {
     execSync('pkill -x jackd 2>/dev/null || true', { stdio: 'ignore', timeout: 5000 });
     console.log('[jack] Sent kill signal to jackd');
   } catch {
     // Ignore errors
+  }
+  
+  // Final status check
+  try {
+    const result = execSync('jack_control status 2>&1', { timeout: 5000 }).toString();
+    const stillRunning = result.split('\n').some(line => line.trim() === 'started');
+    if (stillRunning) {
+      console.error('[jack] WARNING: JACK is still running after stop attempts!');
+    } else {
+      console.log('[jack] JACK stopped');
+    }
+  } catch {
+    // Ignore
   }
 }
