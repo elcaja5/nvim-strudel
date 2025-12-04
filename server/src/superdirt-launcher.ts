@@ -39,6 +39,7 @@ export class SuperDirtLauncher {
   private isRunning = false;
   private options: Required<SuperDirtLauncherOptions>;
   private tempScriptPath: string | null = null;
+  private weStartedJack = false;
 
   constructor(options: SuperDirtLauncherOptions = {}) {
     this.options = {
@@ -207,6 +208,7 @@ s.waitForBoot {
   /**
    * Start SuperDirt
    * Returns a promise that resolves when SuperDirt is ready
+   * On Linux, automatically starts JACK if not running
    */
   async start(): Promise<boolean> {
     if (this.isRunning) {
@@ -217,6 +219,28 @@ s.waitForBoot {
     if (!SuperDirtLauncher.isSclangAvailable()) {
       console.error('[superdirt] sclang not found - install SuperCollider first');
       return false;
+    }
+
+    // On Linux, SuperDirt requires JACK - start it if not running
+    if (platform() === 'linux') {
+      if (!isJackRunning()) {
+        console.log('[superdirt] JACK not running, attempting to start...');
+        // Try common audio devices
+        let result = startJack('hw:1');
+        if (!result.started) {
+          result = startJack('hw:0');
+        }
+        if (result.started) {
+          this.weStartedJack = result.weStartedIt;
+          console.log('[superdirt] JACK started successfully');
+        } else {
+          console.error('[superdirt] Could not start JACK - SuperDirt requires JACK on Linux');
+          console.error('[superdirt] Please start JACK manually: jack_control start');
+          return false;
+        }
+      } else {
+        console.log('[superdirt] JACK is running');
+      }
     }
 
     // Check/install SuperDirt quark
@@ -307,6 +331,7 @@ s.waitForBoot {
 
   /**
    * Stop SuperDirt and cleanup
+   * Also stops JACK if we started it
    */
   stop(): void {
     if (this.sclangProcess) {
@@ -349,6 +374,13 @@ s.waitForBoot {
     this.cleanup();
     this.isRunning = false;
     this.sclangPid = null;
+    
+    // Stop JACK if we started it
+    if (this.weStartedJack) {
+      console.log('[superdirt] Stopping JACK (we started it)...');
+      stopJack();
+      this.weStartedJack = false;
+    }
   }
 
   /**
@@ -374,40 +406,52 @@ s.waitForBoot {
 }
 
 /**
- * Check if JACK is running (Linux only)
- * Tries multiple detection methods: jack_control (DBus), jack_lsp, and process check
+ * Check if JACK server is running and accepting connections (Linux only)
+ * 
+ * IMPORTANT: The jackdbus daemon process may exist without the JACK server being started.
+ * We need to check if the JACK server is actually running and accepting connections.
  */
 export function isJackRunning(): boolean {
   if (platform() !== 'linux') {
     return true; // Assume OK on non-Linux
   }
   
-  // Method 1: Try jack_control (DBus) - most reliable on modern systems
+  // Method 1: Try jack_lsp - this actually connects to the JACK server
+  // If JACK isn't running or accepting connections, this will fail
+  // This is the most reliable method but jack_lsp may not be installed
+  try {
+    execSync('jack_lsp 2>/dev/null', { stdio: 'pipe', timeout: 5000 });
+    return true;
+  } catch {
+    // jack_lsp failed or not installed
+  }
+  
+  // Method 2: Use jack_control status (DBus)
+  // This reports the actual server state, not just if jackdbus daemon is running
+  // Output format: "--- status\nstarted" or "--- status\nstopped"
   try {
     const result = execSync('jack_control status 2>&1', { timeout: 5000 }).toString();
-    if (result.includes('started')) {
+    // Check for "started" on its own line (not just anywhere in output)
+    if (result.split('\n').some(line => line.trim() === 'started')) {
       return true;
+    }
+    // If we got a valid response with "stopped", JACK is definitely not running
+    if (result.split('\n').some(line => line.trim() === 'stopped')) {
+      return false;
     }
   } catch {
     // jack_control not available or failed
   }
   
-  // Method 2: Try jack_lsp (classic method)
+  // Method 3: Check if jackd process is running (not jackdbus)
+  // jackdbus is just the DBus service daemon, it can run without JACK server started
   try {
-    execSync('jack_lsp', { stdio: 'ignore', timeout: 5000 });
-    return true;
-  } catch {
-    // jack_lsp not available or JACK not running
-  }
-  
-  // Method 3: Check if jackd or jackdbus process is running
-  try {
-    const result = execSync('pgrep -x "jackd|jackdbus" 2>/dev/null', { timeout: 5000 }).toString();
+    const result = execSync('pgrep -x jackd 2>/dev/null', { timeout: 5000 }).toString();
     if (result.trim()) {
       return true;
     }
   } catch {
-    // No JACK process found
+    // No jackd process found
   }
   
   return false;
