@@ -5,7 +5,7 @@ import * as mini from '@strudel/mini';
 import * as tonal from '@strudel/tonal';
 import { transpiler } from '@strudel/transpiler';
 import type { ActiveElement, VisualizationEvent } from './types.js';
-import { initOsc, sendHapToSuperDirt, isOscConnected, closeOsc } from './osc-output.js';
+import { initOsc, sendHapToSuperDirt, isOscConnected, closeOsc, setAudioContextStartTime } from './osc-output.js';
 import { writeEngineState, clearEngineState } from './engine-state.js';
 import { loadSamples as loadSamplesForSuperDirt, initSampleManager, notifySuperDirtLoadSamples, setupOscPort } from './sample-manager.js';
 import { loadSoundsForCode, ensureDrumMachineMetadataLoaded } from './on-demand-loader.js';
@@ -458,6 +458,11 @@ export class StrudelEngine {
     const ctx = getAudioContext();
     console.log(`[strudel-engine] AudioContext: ${ctx.state}, ${ctx.sampleRate}Hz`);
     
+    // Record when the AudioContext was created for OSC timing synchronization
+    // AudioContext.currentTime starts at 0, so the start time is now minus currentTime
+    const audioContextStartTime = Date.now() / 1000 - ctx.currentTime;
+    setAudioContextStartTime(audioContextStartTime);
+    
     // Load our Node.js-compatible worklets onto the audio context
     loadNodeWorklets(ctx).catch(err => {
       console.error('[strudel-engine] Failed to load worklets:', err);
@@ -587,8 +592,9 @@ export class StrudelEngine {
         }
         
         // Also send to SuperDirt via OSC if enabled
+        // Pass 't' (target time in AudioContext seconds) for proper scheduling
         if (this.oscEnabled && isOscConnected()) {
-          sendHapToSuperDirt(hap, deadline, cps);
+          sendHapToSuperDirt(hap, t, cps);
         }
         
         // Defer visualization work to avoid blocking audio scheduling

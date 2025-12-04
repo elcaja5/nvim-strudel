@@ -476,6 +476,10 @@ export async function loadSoundsForCode(code: string): Promise<string[]> {
   
   if (loaded.length > 0) {
     console.log(`[on-demand] Loaded ${loaded.length} sounds: ${loaded.join(', ')}`);
+    // Give SuperDirt time to load the samples after we notified it
+    // SuperDirt's loadSoundFiles is async and we don't have a completion callback
+    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log(`[on-demand] Waited for SuperDirt to load samples`);
   } else {
     console.log('[on-demand] All sounds already cached or not loadable');
   }

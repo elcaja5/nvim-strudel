@@ -10,6 +10,31 @@ const OSC_REMOTE_PORT = 57120;
 let udpPort: any = null;
 let isOpen = false;
 
+// Clock synchronization
+// AudioContext time starts at 0 when created, we need to map it to Unix/NTP time
+let audioContextStartTime: number | null = null; // Unix time when AudioContext was created
+
+/**
+ * Set the AudioContext start time for clock synchronization
+ * Call this once when the AudioContext is created
+ */
+export function setAudioContextStartTime(unixTimeSeconds: number): void {
+  audioContextStartTime = unixTimeSeconds;
+  console.log(`[osc] AudioContext start time set: ${unixTimeSeconds.toFixed(3)}`);
+}
+
+/**
+ * Convert AudioContext time to Unix time in seconds
+ */
+function audioTimeToUnixTime(audioTime: number): number {
+  if (audioContextStartTime === null) {
+    // Fallback: assume AudioContext just started
+    audioContextStartTime = Date.now() / 1000;
+    console.warn('[osc] AudioContext start time not set, using fallback');
+  }
+  return audioContextStartTime + audioTime;
+}
+
 /**
  * Initialize the OSC UDP port for sending messages to SuperDirt
  */
@@ -292,9 +317,9 @@ function hapToOscArgs(hap: any, cps: number): any[] {
 }
 
 /**
- * Send a hap to SuperDirt via OSC
+ * Send a hap (event) to SuperDirt via OSC with proper timing
  * @param hap The hap (event) from Strudel
- * @param deadline Seconds until the event should play
+ * @param targetTime The target time in AudioContext seconds when this should play
  * @param cps Cycles per second (tempo)
  */
 let oscDebug = false; // Set to true for debugging
@@ -303,7 +328,7 @@ export function setOscDebug(enabled: boolean): void {
   oscDebug = enabled;
 }
 
-export function sendHapToSuperDirt(hap: any, deadline: number, cps: number): void {
+export function sendHapToSuperDirt(hap: any, targetTime: number, cps: number): void {
   if (oscDebug) {
     console.log(`[osc] sendHapToSuperDirt called, hap.value:`, JSON.stringify(hap.value));
   }
@@ -314,6 +339,14 @@ export function sendHapToSuperDirt(hap: any, deadline: number, cps: number): voi
 
   try {
     const args = hapToOscArgs(hap, cps);
+    
+    // Convert AudioContext time to Unix time for OSC timetag
+    const unixTargetTime = audioTimeToUnixTime(targetTime);
+    
+    // Create OSC timetag (seconds offset from now)
+    // osc.timeTag(n) creates a timetag n seconds from now
+    const now = Date.now() / 1000;
+    const secondsFromNow = unixTargetTime - now;
     
     if (oscDebug) {
       // Just dump key args
@@ -330,16 +363,20 @@ export function sendHapToSuperDirt(hap: any, deadline: number, cps: number): voi
       const sfEnvStr = argsObj.sfSustain !== undefined ? ` sfAttack=${argsObj.sfAttack?.toFixed?.(3)} sfRelease=${argsObj.sfRelease?.toFixed?.(3)} sfSustain=${argsObj.sfSustain?.toFixed?.(3)}` : '';
       const instrStr = argsObj.instrument ? ` instrument=${argsObj.instrument}` : '';
       const orbitStr = argsObj.orbit !== undefined ? ` orbit=${argsObj.orbit}` : ' orbit=MISSING';
-      console.log(`[osc] SEND: s=${argsObj.s} n=${argsObj.n}${orbitStr} speed=${speedStr}${noteStr}${tremStr}${envStr}${sfEnvStr}${instrStr} gain=${argsObj.gain?.toFixed?.(2)}`);
+      console.log(`[osc] SEND: s=${argsObj.s} n=${argsObj.n}${orbitStr} speed=${speedStr}${noteStr}${tremStr}${envStr}${sfEnvStr}${instrStr} gain=${argsObj.gain?.toFixed?.(2)} t+${secondsFromNow.toFixed(3)}s`);
     }
     
-    // Send immediate message (no time bundle) - simpler and more reliable
-    const msg = {
-      address: '/dirt/play',
-      args,
+    // Send as OSC bundle with timetag for precise scheduling
+    // SuperDirt will schedule the sound to play at the specified time
+    const bundle = {
+      timeTag: osc.timeTag(secondsFromNow),
+      packets: [{
+        address: '/dirt/play',
+        args,
+      }]
     };
 
-    udpPort.send(msg);
+    udpPort.send(bundle);
   } catch (err) {
     console.error('[osc] Error sending hap:', err);
   }
