@@ -112,9 +112,16 @@ end
 ---@param midi number MIDI note number (0-127)
 ---@return string Note name like "C4", "D#5"
 local function midi_to_note_name(midi)
+  if not midi or type(midi) ~= 'number' then
+    return '?'
+  end
   local note_names = { 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B' }
   local octave = math.floor(midi / 12) - 1
-  local note = note_names[(midi % 12) + 1]
+  local index = (math.floor(midi) % 12) + 1
+  local note = note_names[index]
+  if not note then
+    return '?'
+  end
   return note .. octave
 end
 
@@ -250,6 +257,9 @@ end
 ---@return string[] labels
 local function generate_note_labels(note_range, num_rows)
   local labels = {}
+  if not note_range or not note_range.max or not note_range.min then
+    return labels
+  end
   local max_note = note_range.max
 
   for row = 0, num_rows - 1 do
