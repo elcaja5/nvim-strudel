@@ -139,7 +139,16 @@ local function render_braille_notes(notes, note_range, width, phase)
 
   local min_note = note_range.min
   local max_note = note_range.max
+  
+  -- Validate note range
+  if not min_note or not max_note or min_note > max_note then
+    return {}, {}
+  end
+  
   local note_count = max_note - min_note + 1
+  if note_count <= 0 then
+    return {}, {}
+  end
 
   -- Each braille char represents 4 rows (notes) and 2 columns (time positions)
   -- So we need ceil(note_count / 4) terminal lines
@@ -159,11 +168,11 @@ local function render_braille_notes(notes, note_range, width, phase)
 
   -- Fill grid from notes
   for _, event in ipairs(notes) do
-    if event.note then
-      local note_idx = event.note - min_note
-      if note_idx >= 0 and note_idx < note_count then
-        local start_col = math.floor(event.start * time_cols)
-        local end_col = math.ceil(event['end'] * time_cols) - 1
+    if event.note and type(event.note) == 'number' then
+      local note_idx = math.floor(event.note - min_note)
+      if note_idx >= 0 and note_idx < note_count and grid[note_idx] then
+        local start_col = math.floor((event.start or 0) * time_cols)
+        local end_col = math.ceil((event['end'] or 0) * time_cols) - 1
         for t = math.max(0, start_col), math.min(time_cols - 1, end_col) do
           grid[note_idx][t] = { on = true, active = event.active }
         end
