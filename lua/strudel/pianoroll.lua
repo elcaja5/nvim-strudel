@@ -967,6 +967,23 @@ show_window = function()
     end,
   })
 
+  -- Set up autocommand to close pianoroll if it becomes the last window
+  -- This prevents pianoroll from keeping Neovim alive
+  vim.api.nvim_create_autocmd('WinClosed', {
+    callback = function()
+      vim.schedule(function()
+        if not state.winid or not vim.api.nvim_win_is_valid(state.winid) then
+          return
+        end
+        local wins = vim.api.nvim_list_wins()
+        -- If pianoroll is the only window left, quit
+        if #wins == 1 and wins[1] == state.winid then
+          vim.cmd('quit')
+        end
+      end)
+    end,
+  })
+
   utils.debug('Pianoroll window shown')
 end
 
