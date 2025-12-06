@@ -172,7 +172,8 @@ local function render_braille_notes(notes, note_range, width, phase)
       local note_idx = math.floor(event.note - min_note)
       if note_idx >= 0 and note_idx < note_count and grid[note_idx] then
         local start_col = math.floor((event.start or 0) * time_cols)
-        local end_col = math.ceil((event['end'] or 0) * time_cols) - 1
+        -- Use floor for end_col to make it exclusive (avoid overlap with next note)
+        local end_col = math.floor((event['end'] or 0) * time_cols) - 1
         for t = math.max(0, start_col), math.min(time_cols - 1, end_col) do
           grid[note_idx][t] = { on = true, active = event.active }
         end
