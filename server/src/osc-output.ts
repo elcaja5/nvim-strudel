@@ -284,6 +284,14 @@ function hapToOscArgs(hap: any, cps: number): any[] {
     // We always use delta (note duration) for sfSustain
     if (controls.sfSustain == null) controls.sfSustain = delta;
     
+    // IMPORTANT: Delete standard envelope params so SuperDirt's core modules
+    // don't apply their own envelope on top of our custom SynthDef's envelope.
+    // Without this, sustain=0 (sustain LEVEL) causes SuperDirt to mute the sound.
+    delete controls.attack;
+    delete controls.decay;
+    delete controls.sustain;
+    delete controls.release;
+    
     // speed is critical - without it SuperDirt passes invalid value and synth is silent
     if (controls.speed == null) controls.speed = 1;
     
@@ -365,7 +373,9 @@ export function sendHapToSuperDirt(hap: any, targetTime: number, cps: number): v
       const sfEnvStr = argsObj.sfSustain !== undefined ? ` sfAttack=${argsObj.sfAttack?.toFixed?.(3)} sfRelease=${argsObj.sfRelease?.toFixed?.(3)} sfSustain=${argsObj.sfSustain?.toFixed?.(3)}` : '';
       const instrStr = argsObj.instrument ? ` instrument=${argsObj.instrument}` : '';
       const orbitStr = argsObj.orbit !== undefined ? ` orbit=${argsObj.orbit}` : ' orbit=MISSING';
-      console.log(`[osc] SEND: s=${argsObj.s} n=${argsObj.n}${orbitStr} speed=${speedStr}${noteStr}${tremStr}${envStr}${sfEnvStr}${instrStr} gain=${argsObj.gain?.toFixed?.(2)} t+${secondsFromNow.toFixed(3)}s`);
+      const cutoffStr = argsObj.cutoff !== undefined ? ` cutoff=${argsObj.cutoff?.toFixed?.(0)}` : '';
+      const shapeStr = argsObj.shape !== undefined ? ` shape=${argsObj.shape?.toFixed?.(2)}` : '';
+      console.log(`[osc] SEND: s=${argsObj.s} n=${argsObj.n}${orbitStr} speed=${speedStr}${noteStr}${cutoffStr}${shapeStr}${tremStr}${envStr}${sfEnvStr}${instrStr} gain=${argsObj.gain?.toFixed?.(2)} t+${secondsFromNow.toFixed(3)}s`);
     }
     
     // Send as OSC bundle with timetag for precise scheduling

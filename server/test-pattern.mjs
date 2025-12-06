@@ -157,6 +157,9 @@ if (useOsc) {
     enableOscSampleLoading(oscPort);
     engine.enableOsc('127.0.0.1', 57120);
     
+    // Disable WebAudio when using OSC (same as index.ts does)
+    engine.setWebAudioEnabled(false);
+    
     if (verbose) {
       setOscDebug(true);
       console.log('Verbose OSC logging enabled');
